@@ -135,6 +135,11 @@ class Battle:
                 pokemon,
                 move,
             ) 
+            target = self.active_p2[0]
+
+            self.state.log(
+                f"{target.species} was targeted."
+            )
     def use_move(self, pokemon, move):
         """
         Have a Pokémon use a move.
