@@ -51,6 +51,7 @@ class BattleState:
     sticky_web_p2: bool = False
 
     last_damage: int = 0
+    last_move: str | None = None
 
     # Battle log
     battle_log: list[str] = field(default_factory=list)
