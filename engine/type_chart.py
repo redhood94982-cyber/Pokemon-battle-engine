@@ -110,4 +110,16 @@ TYPE_CHART = {
         "Steel": 0.5,
         "Dark": 0.0,
     },
+    "Bug": {
+        "Grass": 2.0,
+        "Psychic": 2.0,
+        "Dark": 2.0,
+        "Fire": 0.5,
+        "Fighting": 0.5,
+        "Poison": 0.5,
+        "Flying": 0.5,
+        "Ghost": 0.5,
+        "Steel": 0.5,
+        "Fairy": 0.5,
+    },
 }
