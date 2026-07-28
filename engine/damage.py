@@ -77,8 +77,9 @@ def apply_spread(
 def calculate_damage(
     level: int,
     power: int,
+    move_type: str,
+    defender_types: list[str],
     attack: int,
-    defense: int,
     stab: bool = False,
     effectiveness: float = 1.0,
     burned: bool = False,
