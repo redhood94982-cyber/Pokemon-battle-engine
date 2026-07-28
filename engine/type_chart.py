@@ -23,12 +23,25 @@ TYPE_CHART = {
         "Steel": 2.0,
     },
 
-    "Water": {
+        "Water": {
         "Fire": 2.0,
         "Water": 0.5,
         "Grass": 0.5,
         "Ground": 2.0,
         "Rock": 2.0,
         "Dragon": 0.5,
+    },
+
+    "Grass": {
+        "Fire": 0.5,
+        "Water": 2.0,
+        "Grass": 0.5,
+        "Poison": 0.5,
+        "Ground": 2.0,
+        "Flying": 0.5,
+        "Bug": 0.5,
+        "Rock": 2.0,
+        "Dragon": 0.5,
+        "Steel": 0.5,
     },
 }
