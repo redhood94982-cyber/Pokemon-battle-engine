@@ -81,7 +81,6 @@ def calculate_damage(
     defender_types: list[str],
     attack: int,
     stab: bool = False,
-    effectiveness: float = 1.0,
     burned: bool = False,
     physical: bool = True,
     spread_move: bool = False,
