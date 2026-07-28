@@ -4,9 +4,8 @@ damage.py
 
 Damage calculation utilities.
 
-This file implements the core Generation 6+ damage formula
-foundation. Additional modifiers (abilities, items, weather,
-screens, etc.) will be added in future commits.
+This file implements the foundation of the
+Generation 6+ damage formula.
 """
 
 import math
@@ -23,16 +22,21 @@ def apply_stab(base_damage: int, stab: bool) -> int:
     return math.floor(base_damage * 1.5)
 
 
-def apply_type_effectiveness(base_damage: int, multiplier: float) -> int:
+def apply_type_effectiveness(
+    base_damage: int,
+    multiplier: float,
+) -> int:
     """Apply type effectiveness."""
 
     return math.floor(base_damage * multiplier)
 
 
-def apply_burn(base_damage: int,
-               burned: bool,
-               physical: bool) -> int:
-    """Apply burn attack reduction."""
+def apply_burn(
+    base_damage: int,
+    burned: bool,
+    physical: bool,
+) -> int:
+    """Apply burn modifier."""
 
     if burned and physical:
         return math.floor(base_damage * 0.5)
@@ -40,9 +44,11 @@ def apply_burn(base_damage: int,
     return base_damage
 
 
-def apply_spread(base_damage: int,
-                 spread_move: bool) -> int:
-    """Apply doubles spread modifier."""
+def apply_spread(
+    base_damage: int,
+    spread_move: bool,
+) -> int:
+    """Apply spread move modifier."""
 
     if spread_move:
         return math.floor(base_damage * 0.75)
@@ -62,27 +68,54 @@ def calculate_damage(
     spread_move: bool = False,
 ) -> int:
     """
-    Core cartridge damage calculation.
+    Core damage calculation.
 
-    This is the foundation and will be expanded with:
+    Future updates will add:
+    - Critical hits
     - Weather
-    - Critical Hits
     - Abilities
     - Items
     - Screens
     - Terrain
-    - Multi-target modifiers
     """
 
     damage = math.floor((2 * level) / 5)
     damage += 2
 
-    damage = math.floor(damage * power * attack / defense)
+    damage = math.floor(
+        damage * power * attack / defense
+    )
 
     damage = math.floor(damage / 50)
 
     damage += 2
 
-    damage = math.floor(damage * FIXED_DAMAGE_ROLL)
+    damage = math.floor(
+        damage * FIXED_DAMAGE_ROLL
+    )
 
-    damage = apply_stab(damage, stab
+    damage = apply_stab(
+        damage,
+        stab,
+    )
+
+    damage = apply_type_effectiveness(
+        damage,
+        effectiveness,
+    )
+
+    damage = apply_burn(
+        damage,
+        burned,
+        physical,
+    )
+
+    damage = apply_spread(
+        damage,
+        spread_move,
+    )
+
+    if damage < 1:
+        damage = 1
+
+    return damage
