@@ -103,4 +103,11 @@ TYPE_CHART = {
         "Rock": 0.5,
         "Steel": 0.5,
     },
+    "Psychic": {
+        "Fighting": 2.0,
+        "Poison": 2.0,
+        "Psychic": 0.5,
+        "Steel": 0.5,
+        "Dark": 0.0,
+    },
 }
