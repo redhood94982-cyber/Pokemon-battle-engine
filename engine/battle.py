@@ -215,5 +215,7 @@ class Battle:
         self.state.log(
             f"{pokemon.species} used {move.name}!"
         )
+        
+        self.state.last_move = move.name
 
         return move
