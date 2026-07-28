@@ -12,7 +12,7 @@ TYPE_CHART = {
         "Steel": 0.5,
     },
 
-    "Fire": {
+        "Fire": {
         "Fire": 0.5,
         "Water": 0.5,
         "Grass": 2.0,
@@ -21,5 +21,14 @@ TYPE_CHART = {
         "Rock": 0.5,
         "Dragon": 0.5,
         "Steel": 2.0,
+    },
+
+    "Water": {
+        "Fire": 2.0,
+        "Water": 0.5,
+        "Grass": 0.5,
+        "Ground": 2.0,
+        "Rock": 2.0,
+        "Dragon": 0.5,
     },
 }
