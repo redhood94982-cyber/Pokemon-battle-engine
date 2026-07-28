@@ -152,6 +152,10 @@ if target.current_hp < 0:
             self.state.log(
                 f"{target.species} took {damage} damage."
             )
+if target.current_hp == 0:
+    self.state.log(
+        f"{target.species} fainted!"
+    )
     def use_move(self, pokemon, move):
         """
         Have a Pokémon use a move.
