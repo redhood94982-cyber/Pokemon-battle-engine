@@ -193,6 +193,8 @@ class Battle:
         target.current_hp -= damage
 
         self.state.last_damage = damage
+        self.state.last_target = target
+        
         if target.current_hp < 0:
             target.current_hp = 0
         elif target.current_hp > target.hp:
