@@ -1,97 +1,90 @@
 """
 Pokemon Battle Engine
 battle_state.py
-
-Core battle state.
-Phase 1
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Optional
 
 
 @dataclass
 class BattleState:
-    # -------------------------
-    # Battle Info
-    # -------------------------
-
+    # Turn
     turn: int = 1
 
+    # Weather
     weather: Optional[str] = None
-    terrain: Optional[str] = None
+    weather_turns: int = 0
 
+    # Terrain
+    terrain: Optional[str] = None
+    terrain_turns: int = 0
+
+    # Room effects
     trick_room: bool = False
     trick_room_turns: int = 0
 
-    # -------------------------
-    # Player 1 Field
-    # -------------------------
+    # Side effects
+    reflect_p1: int = 0
+    reflect_p2: int = 0
 
-    tailwind_p1: bool = False
-    tailwind_turns_p1: int = 0
+    light_screen_p1: int = 0
+    light_screen_p2: int = 0
 
-    reflect_p1: bool = False
-    reflect_turns_p1: int = 0
+    aurora_veil_p1: int = 0
+    aurora_veil_p2: int = 0
 
-    light_screen_p1: bool = False
-    light_screen_turns_p1: int = 0
+    tailwind_p1: int = 0
+    tailwind_p2: int = 0
 
-    aurora_veil_p1: bool = False
-    aurora_veil_turns_p1: int = 0
+    # Hazards
+    stealth_rock_p1: bool = False
+    stealth_rock_p2: bool = False
 
-    # -------------------------
-    # Player 2 Field
-    # -------------------------
+    spikes_p1: int = 0
+    spikes_p2: int = 0
 
-    tailwind_p2: bool = False
-    tailwind_turns_p2: int = 0
+    toxic_spikes_p1: int = 0
+    toxic_spikes_p2: int = 0
 
-    reflect_p2: bool = False
-    reflect_turns_p2: int = 0
+    sticky_web_p1: bool = False
+    sticky_web_p2: bool = False
 
-    light_screen_p2: bool = False
-    light_screen_turns_p2: int = 0
+    # Battle log
+    battle_log: list[str] = field(default_factory=list)
 
-    aurora_veil_p2: bool = False
-    aurora_veil_turns_p2: int = 0
+    def log(self, message: str):
+        self.battle_log.append(message)
 
-    # -------------------------
-    # Active Pokémon
-    # -------------------------
+    def next_turn(self):
+        self.turn += 1
+        self.log(f"Turn {self.turn}")
 
-    player1_active: List[str] = field(default_factory=list)
-    player2_active: List[str] = field(default_factory=list)
+    def clear_weather(self):
+        self.weather = None
+        self.weather_turns = 0
 
-    # -------------------------
-    # Teams
-    # -------------------------
+    def clear_terrain(self):
+        self.terrain = None
+        self.terrain_turns = 0
 
-    player1_team: List[str] = field(default_factory=list)
-    player2_team: List[str] = field(default_factory=list)
+    def decrement_timers(self):
+        timers = [
+            "weather_turns",
+            "terrain_turns",
+            "trick_room_turns",
+            "reflect_p1",
+            "reflect_p2",
+            "light_screen_p1",
+            "light_screen_p2",
+            "aurora_veil_p1",
+            "aurora_veil_p2",
+            "tailwind_p1",
+            "tailwind_p2",
+        ]
 
-    # -------------------------
-    # HP Tracking
-    # -------------------------
+        for timer in timers:
+            value = getattr(self, timer)
 
-    hp: Dict[str, int] = field(default_factory=dict)
-    max_hp: Dict[str, int] = field(default_factory=dict)
-
-    # -------------------------
-    # Status
-    # -------------------------
-
-    status: Dict[str, Optional[str]] = field(default_factory=dict)
-
-    toxic_counter: Dict[str, int] = field(default_factory=dict)
-
-    sleep_turns: Dict[str, int] = field(default_factory=dict)
-
-    # -------------------------
-    # Stat Stages
-    # -------------------------
-
-    stat_stages: Dict[str, Dict[str, int]] = field(default_factory=dict)
-
-    # -------------------------
-    # Battle
+            if value > 0:
+                setattr(self, timer, value - 1)
