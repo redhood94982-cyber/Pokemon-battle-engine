@@ -6,7 +6,7 @@ Core battle controller.
 """
 
 from .battle_state import BattleState
-
+from .damage import calculate_damage
 
 class Battle:
     """
@@ -140,7 +140,11 @@ class Battle:
             self.state.log(
                 f"{target.species} was targeted."
             )
-            damage = 10
+            damage = calculate_damage(
+    pokemon,
+    target,
+    move,
+)
 
             target.current_hp -= damage
 
