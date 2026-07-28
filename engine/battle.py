@@ -116,3 +116,18 @@ class Battle:
             self.state.log(
                 f" - {pokemon.species}"
             )
+    def perform_turn(self):
+        """
+        Make each Pokémon act in Speed order.
+        """
+
+        turn_order = self.get_turn_order()
+
+        for pokemon in turn_order:
+
+            if pokemon.current_hp <= 0:
+                continue
+
+            self.state.log(
+                f"{pokemon.species} takes its turn."
+            )
