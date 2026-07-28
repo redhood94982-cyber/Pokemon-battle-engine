@@ -2,52 +2,52 @@
 Pokemon Battle Engine
 damage.py
 
-Core damage calculation functions.
+Damage calculation utilities.
 
-This is the foundation of the cartridge damage engine.
-Additional modifiers (abilities, items, weather, etc.)
-will be added in future commits.
+This file implements the core Generation 6+ damage formula
+foundation. Additional modifiers (abilities, items, weather,
+screens, etc.) will be added in future commits.
 """
 
 import math
 
-
-def stab_modifier(move_type: str, attacker_types: list[str]) -> float:
-    """Returns the STAB multiplier."""
-
-    if move_type in attacker_types:
-        return 1.5
-
-    return 1.0
+FIXED_DAMAGE_ROLL = 0.925
 
 
-def type_modifier(modifiers: list[float]) -> float:
-    """Multiplies together all type effectiveness values."""
+def apply_stab(base_damage: int, stab: bool) -> int:
+    """Apply Same Type Attack Bonus."""
 
-    result = 1.0
+    if not stab:
+        return base_damage
 
-    for value in modifiers:
-        result *= value
-
-    return result
+    return math.floor(base_damage * 1.5)
 
 
-def burn_modifier(is_burned: bool, physical_move: bool) -> float:
-    """Physical attacks are halved while burned."""
+def apply_type_effectiveness(base_damage: int, multiplier: float) -> int:
+    """Apply type effectiveness."""
 
-    if is_burned and physical_move:
-        return 0.5
-
-    return 1.0
+    return math.floor(base_damage * multiplier)
 
 
-def spread_modifier(is_spread_move: bool) -> float:
-    """Damage modifier for spread moves."""
+def apply_burn(base_damage: int,
+               burned: bool,
+               physical: bool) -> int:
+    """Apply burn attack reduction."""
 
-    if is_spread_move:
-        return 0.75
+    if burned and physical:
+        return math.floor(base_damage * 0.5)
 
-    return 1.0
+    return base_damage
+
+
+def apply_spread(base_damage: int,
+                 spread_move: bool) -> int:
+    """Apply doubles spread modifier."""
+
+    if spread_move:
+        return math.floor(base_damage * 0.75)
+
+    return base_damage
 
 
 def calculate_damage(
@@ -55,43 +55,34 @@ def calculate_damage(
     power: int,
     attack: int,
     defense: int,
-    stab: float,
-    effectiveness: float,
-    burn: float,
-    spread: float,
-    other: float = 1.0,
-    damage_roll: float = 0.925,
+    stab: bool = False,
+    effectiveness: float = 1.0,
+    burned: bool = False,
+    physical: bool = True,
+    spread_move: bool = False,
 ) -> int:
     """
-    Core Pokémon damage formula.
+    Core cartridge damage calculation.
 
-    This version is intentionally simple.
-    Future commits will add exact cartridge rounding,
-    critical hits, weather, abilities, items,
-    screens, Parental Bond, and every remaining modifier.
+    This is the foundation and will be expanded with:
+    - Weather
+    - Critical Hits
+    - Abilities
+    - Items
+    - Screens
+    - Terrain
+    - Multi-target modifiers
     """
 
-    base = math.floor((2 * level) / 5)
-    base += 2
+    damage = math.floor((2 * level) / 5)
+    damage += 2
 
-    base = math.floor(base * power * attack / defense)
+    damage = math.floor(damage * power * attack / defense)
 
-    base = math.floor(base / 50)
+    damage = math.floor(damage / 50)
 
-    base += 2
+    damage += 2
 
-    modifier = (
-        stab
-        * effectiveness
-        * burn
-        * spread
-        * other
-        * damage_roll
-    )
+    damage = math.floor(damage * FIXED_DAMAGE_ROLL)
 
-    damage = math.floor(base * modifier)
-
-    if damage < 1:
-        damage = 1
-
-    return damage
+    damage = apply_stab(damage, stab
