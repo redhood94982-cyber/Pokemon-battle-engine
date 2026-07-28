@@ -79,3 +79,40 @@ class Battle:
             f"{self.active_p2[0].species} and "
             f"{self.active_p2[1].species}."
         )
+    def get_turn_order(self):
+        """
+        Returns all active Pokémon sorted by Speed.
+        Fastest Pokémon goes first.
+        """
+
+        battlers = (
+            self.active_p1 +
+            self.active_p2
+        )
+
+        battlers.sort(
+            key=lambda pokemon: pokemon.speed,
+            reverse=True,
+        )
+
+        return battlers
+
+    def begin_turn(self):
+        """
+        Start a new turn.
+        """
+
+        self.state.log(
+            f"Turn {self.state.turn}"
+        )
+
+        turn_order = self.get_turn_order()
+
+        self.state.log(
+            "Turn order:"
+        )
+
+        for pokemon in turn_order:
+            self.state.log(
+                f" - {pokemon.species}"
+            )
