@@ -35,3 +35,47 @@ class Battle:
         self.winner = None
 
         self.state.log("Battle initialized.")
+    def register_teams(self, player1_team, player2_team):
+        """
+        Give each player their team.
+        """
+
+        if len(player1_team) != 6:
+            raise ValueError("Player 1 must have exactly 6 Pokémon.")
+
+        if len(player2_team) != 6:
+            raise ValueError("Player 2 must have exactly 6 Pokémon.")
+
+        self.player1_team = player1_team
+        self.player2_team = player2_team
+
+        self.state.log("Teams registered.")
+
+    def start_battle(self):
+        """
+        Send the first two Pokémon onto the field.
+        """
+
+        self.active_p1 = [
+            self.player1_team[0],
+            self.player1_team[1],
+        ]
+
+        self.active_p2 = [
+            self.player2_team[0],
+            self.player2_team[1],
+        ]
+
+        self.state.log("Battle started.")
+
+        self.state.log(
+            f"P1 sent out "
+            f"{self.active_p1[0].species} and "
+            f"{self.active_p1[1].species}."
+        )
+
+        self.state.log(
+            f"P2 sent out "
+            f"{self.active_p2[0].species} and "
+            f"{self.active_p2[1].species}."
+        )
