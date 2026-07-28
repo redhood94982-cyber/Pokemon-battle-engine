@@ -140,6 +140,13 @@ class Battle:
             self.state.log(
                 f"{target.species} was targeted."
             )
+            damage = 10
+
+            target.current_hp -= damage
+
+            self.state.log(
+                f"{target.species} took {damage} damage."
+            )
     def use_move(self, pokemon, move):
         """
         Have a Pokémon use a move.
