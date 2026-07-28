@@ -176,6 +176,11 @@ class Battle:
     )
     continue
 
+        critical = self.critical_hit()
+
+        if critical:
+            self.state.log("A critical hit!")
+
         damage = calculate_damage(
             pokemon,
             target,
