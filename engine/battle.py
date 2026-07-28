@@ -118,51 +118,58 @@ class Battle:
         )
     
     def perform_turn(self):
-        """
-        Make each Pokémon act in Speed order.
-        """
+    """
+    Make each Pokémon act in Speed order.
+    """
 
-        turn_order = self.get_turn_order()
+    turn_order = self.get_turn_order()
 
-        for pokemon in turn_order:
+    for pokemon in turn_order:
 
-            if pokemon.current_hp <= 0:
-                continue
+        if pokemon.current_hp <= 0:
+            continue
 
-            move = pokemon.moves[0]
-            if move is None:
-               continue
+        move = pokemon.moves[0]
 
-            self.use_move(
-                pokemon,
-                move,
-            ) 
-            target = self.active_p2[0]
-            if target.current_hp <= 0:
-                continue
+        if move is None:
+            continue
 
+        self.use_move(
+            pokemon,
+            move,
+        )
+
+        target = self.active_p2[0]
+
+        if target.current_hp <= 0:
+            continue
+
+        self.state.log(
+            f"{target.species} was targeted."
+        )
+
+        damage = calculate_damage(
+            pokemon,
+            target,
+            move,
+        )
+
+        target.current_hp -= damage
+
+        if target.current_hp < 0:
+            target.current_hp = 0
+        elif target.current_hp > target.hp:
+            target.current_hp = target.hp
+
+        self.state.log(
+            f"{target.species} took {damage} damage."
+        )
+
+        if target.current_hp == 0:
             self.state.log(
-                f"{target.species} was targeted."
+                f"{target.species} fainted!"
             )
-            damage = calculate_damage(
-    pokemon,
-    target,
-    move,
-)
-
-            target.current_hp -= damage
-if target.current_hp < 0:
-    target.current_hp = 0
-elif target.current_hp > target.hp:
-    target.current_hp = target.hp
-            self.state.log(
-                f"{target.species} took {damage} damage."
-            )
-if target.current_hp == 0:
-    self.state.log(
-        f"{target.species} fainted!"
-)
-   continue
+            continue
     def use_move(self, pokemon, move):
         """
         Have a Pokémon use a move.
