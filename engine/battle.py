@@ -185,6 +185,7 @@ class Battle:
             pokemon,
             target,
             move,
+            critical=critical,
         )
 
         target.current_hp -= damage
