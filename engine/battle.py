@@ -130,6 +130,8 @@ class Battle:
                 continue
 
             move = pokemon.moves[0]
+if move is None:
+    continue
 
             self.use_move(
                 pokemon,
