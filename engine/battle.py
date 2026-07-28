@@ -147,7 +147,8 @@ class Battle:
 )
 
             target.current_hp -= damage
-
+if target.current_hp < 0:
+    target.current_hp = 0
             self.state.log(
                 f"{target.species} took {damage} damage."
             )
