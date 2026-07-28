@@ -6,6 +6,7 @@ Core battle controller.
 """
 import random
 
+CRITICAL_HIT_CHANCE = 24
 
 from .battle_state import BattleState
 from .damage import calculate_damage
