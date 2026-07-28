@@ -1,4 +1,4 @@
-we"""
+"""
 Pokemon Battle Engine
 type_chart.py
 
@@ -94,5 +94,13 @@ TYPE_CHART = {
         "Grass": 0.5,
         "Bug": 0.5,
         "Flying": 0.0,
+    },
+    "Flying": {
+        "Grass": 2.0,
+        "Fighting": 2.0,
+        "Bug": 2.0,
+        "Electric": 0.5,
+        "Rock": 0.5,
+        "Steel": 0.5,
     },
 }
