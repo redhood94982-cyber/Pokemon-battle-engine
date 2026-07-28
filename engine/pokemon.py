@@ -1,76 +1,55 @@
 """
-Pokemon Battle Engine
 pokemon.py
 
-Represents a single Pokémon in battle.
+Core Pokémon object used by the battle engine.
+
+Temporary implementation:
+- Stores all battle information.
+- Stat calculations will be added next.
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import List, Dict, Optional
 
 
 @dataclass
 class Pokemon:
-    # Identity
     species: str
-    level: int = 50
-    nickname: Optional[str] = None
+    level: int
+    types: List[str]
 
-    # Typing
-    type1: str = ""
-    type2: Optional[str] = None
+    ability: str
+    item: Optional[str]
+    nature: str
 
-    # Battle Information
-    ability: str = ""
-    item: str = ""
+    base_stats: Dict[str, int]
+    ivs: Dict[str, int]
+    evs: Dict[str, int]
 
-    # HP
-    max_hp: int = 0
+    moves: List[str]
+
     current_hp: int = 0
+    max_hp: int = 0
 
-    # Stats
-    attack: int = 0
-    defense: int = 0
-    special_attack: int = 0
-    special_defense: int = 0
-    speed: int = 0
-
-    # Status
     status: Optional[str] = None
-    sleep_turns: int = 0
-    toxic_counter: int = 0
 
-    # Moves
-    moves: List[str] = field(default_factory=list)
-
-    # PP
-    pp: Dict[str, int] = field(default_factory=dict)
-
-    # Stat stages
     stat_stages: Dict[str, int] = field(default_factory=lambda: {
         "atk": 0,
         "def": 0,
         "spa": 0,
         "spd": 0,
         "spe": 0,
-        "acc": 0,
-        "eva": 0,
+        "accuracy": 0,
+        "evasion": 0,
     })
 
-    # Volatile conditions
-    protected: bool = False
-    flinched: bool = False
-    taunted: bool = False
-    confused: bool = False
-    substitute_hp: int = 0
+    mega_evolved: bool = False
 
-    # Battle flags
-    fainted: bool = False
+    def is_fainted(self) -> bool:
+        return self.current_hp <= 0
 
-    def take_damage(self, damage: int):
-        self.current_hp = max(0, self.current_hp - damage)
+    def heal(self, amount: int):
+        self.current_hp = min(self.max_hp, self.current_hp + amount)
 
-        if self.current_hp == 0:
-            self.fainted = True
-
-   
+    def damage(self, amount: int):
+        self.current_hp = max(0, self.current_hp - amount)
