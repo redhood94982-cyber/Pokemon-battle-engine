@@ -9,6 +9,7 @@ Generation 6+ damage formula.
 """
 
 import math
+from .type_chart import TYPE_CHART
 
 FIXED_DAMAGE_ROLL = 0.925
 
