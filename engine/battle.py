@@ -187,6 +187,8 @@ class Battle:
             move,
             stab=move.move_type in pokemon.types,
             defender_types=target.types,
+            burned=pokemon.status == "burn",
+            physical=move.category == "Physical",
             critical=critical,
         )
 
