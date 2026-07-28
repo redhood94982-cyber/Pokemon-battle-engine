@@ -61,6 +61,16 @@ def get_type_multiplier(move_type: str, defender_types: list[str]) -> float:
 
     return multiplier
 
+def apply_critical(
+    base_damage: int,
+    critical: bool,
+) -> int:
+    """Apply critical hit modifier."""
+
+    if critical:
+        return math.floor(base_damage * 1.5)
+
+    return base_damage
 
 def apply_spread(
     base_damage: int,
@@ -85,6 +95,7 @@ def calculate_damage(
     burned: bool = False,
     physical: bool = True,
     spread_move: bool = False,
+    critical: bool = False,
 ) -> int:
     """
     Core damage calculation.
@@ -124,6 +135,11 @@ def calculate_damage(
         move_type,
         defender_types,
     ),
+)
+
+    damage = apply_critical(
+    damage,
+    critical,
 )
 
     damage = apply_burn(
