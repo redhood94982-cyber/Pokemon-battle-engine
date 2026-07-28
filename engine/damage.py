@@ -44,6 +44,23 @@ def apply_burn(
 
     return base_damage
 
+def get_type_multiplier(move_type: str, defender_types: list[str]) -> float:
+    """
+    Calculate total type effectiveness against one or two defender types.
+    """
+    multiplier = 1.0
+
+    for defender_type in defender_types:
+        multiplier *= TYPE_CHART.get(
+            move_type,
+            {}
+        ).get(
+            defender_type,
+            1.0
+        )
+
+    return multiplier
+
 
 def apply_spread(
     base_damage: int,
@@ -101,9 +118,12 @@ def calculate_damage(
     )
 
     damage = apply_type_effectiveness(
-        damage,
-        effectiveness,
-    )
+    damage,
+    get_type_multiplier(
+        move_type,
+        defender_types,
+    ),
+)
 
     damage = apply_burn(
         damage,
