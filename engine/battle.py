@@ -9,6 +9,7 @@ import random
 
 from .battle_state import BattleState
 from .damage import calculate_damage
+from .move import Move
 
 class Battle:
     """
