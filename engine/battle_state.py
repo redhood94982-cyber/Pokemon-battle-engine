@@ -53,6 +53,7 @@ class BattleState:
     last_damage: int = 0
     last_move: str | None = None
     last_target = None
+    status_effect: str | None = None
 
     # Battle log
     battle_log: list[str] = field(default_factory=list)
