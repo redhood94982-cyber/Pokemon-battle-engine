@@ -51,6 +51,12 @@ class Battle:
       roll = random.randint(1, 100)
 
       return roll <= move.accuracy
+
+    def critical_hit(self) -> bool:
+        """
+        Return True if the attack is a critical hit.
+        """
+        return random.randint(1, CRITICAL_HIT_CHANCE) == 1
  
     def register_teams(self, player1_team, player2_team):
       """
