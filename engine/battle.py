@@ -4,6 +4,8 @@ battle.py
 
 Core battle controller.
 """
+import random
+
 
 from .battle_state import BattleState
 from .damage import calculate_damage
@@ -35,16 +37,29 @@ class Battle:
         self.winner = None
 
         self.state.log("Battle initialized.")
-    def register_teams(self, player1_team, player2_team):
-        """
-        Give each player their team.
-        """
 
-        if len(player1_team) != 6:
+    def accuracy_check(self, move) -> bool:
+      """
+      Return True if the move hits.
+      """
+
+      if move.accuracy >= 100:
+         return True
+
+      roll = random.randint(1, 100)
+
+      return roll <= move.accuracy
+ 
+    def register_teams(self, player1_team, player2_team):
+      """
+      Give each player their team.
+      """
+
+      if len(player1_team) != 6:
             raise ValueError("Player 1 must have exactly 6 Pokémon.")
 
         if len(player2_team) != 6:
-            raise ValueError("Player 2 must have exactly 6 Pokémon.")
+           raise ValueError("Player 2 must have exactly 6 Pokémon.")
 
         self.player1_team = player1_team
         self.player2_team = player2_team
