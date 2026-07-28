@@ -163,6 +163,11 @@ class Battle:
         self.state.log(
             f"{target.species} was targeted."
         )
+        if not self.accuracy_check(move):
+           self.state.log(
+              f"{pokemon.species}'s attack missed!"
+    )
+    continue
 
         damage = calculate_damage(
             pokemon,
