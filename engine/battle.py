@@ -136,6 +136,8 @@ class Battle:
                 move,
             ) 
             target = self.active_p2[0]
+if target.current_hp <= 0:
+    continue
 
             self.state.log(
                 f"{target.species} was targeted."
