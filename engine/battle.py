@@ -185,6 +185,7 @@ class Battle:
             pokemon,
             target,
             move,
+            stab=move.move_type in pokemon.types,
             critical=critical,
         )
 
