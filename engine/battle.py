@@ -169,42 +169,51 @@ class Battle:
             continue
 
         if not pokemon.moves:
-           self.state.log(f"{pokemon.species} has no moves.")
-           continue
+            self.state.log(
+                f"{pokemon.species} has no moves."
+            )
+            continue
 
         move = pokemon.moves[0]
 
         if move is None:
-           self.state.log(f"{pokemon.species} has no selected move.")
-           continue
+            self.state.log(
+                f"{pokemon.species} has no selected move."
+            )
+            continue
+
+        target = self.get_target(pokemon)
+
+        if target is None:
+            self.state.log(
+                "No valid target."
+            )
+            continue
+
+        if target.current_hp <= 0:
+            continue
 
         self.use_move(
             pokemon,
             move,
         )
 
-        target = self.get_target(pokemon)
-
-        if target is None:
-            self.state.log("No valid target.")
-            continue
-
-        if target.current_hp <= 0:
-           continue
-
         self.state.log(
             f"{target.species} was targeted."
         )
+
         if not self.accuracy_check(move):
-           self.state.log(
-              f"{pokemon.species}'s attack missed!"
-    )
-    continue
+            self.state.log(
+                f"{pokemon.species}'s attack missed!"
+            )
+            continue
 
         critical = self.critical_hit()
 
         if critical:
-            self.state.log("A critical hit!")
+            self.state.log(
+                "A critical hit!"
+            )
 
         damage = calculate_damage(
             pokemon,
@@ -221,11 +230,9 @@ class Battle:
 
         self.state.last_damage = damage
         self.state.last_target = target
-        
+
         if target.current_hp < 0:
             target.current_hp = 0
-        elif target.current_hp > target.hp:
-            target.current_hp = target.hp
 
         self.state.log(
             f"{target.species} took {damage} damage."
@@ -235,7 +242,6 @@ class Battle:
             self.state.log(
                 f"{target.species} fainted!"
             )
-            continue
     def use_move(self, pokemon, move):
         """
         Have a Pokémon use a move.
