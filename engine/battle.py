@@ -120,13 +120,15 @@ class Battle:
 
         return battlers
 
-    def begin_turn(self):
+     def begin_turn(self):
         """
         Start a new turn.
         """
 
+        self.state.turn += 1
+
         self.state.log(
-            f"Turn {self.state.turn}"
+            f"--- Turn {self.state.turn} ---"
         )
 
         turn_order = self.get_turn_order()
@@ -136,9 +138,18 @@ class Battle:
         )
 
         for pokemon in turn_order:
-        self.state.log(
-            f" - {pokemon.species}"
-        )
+            if pokemon.current_hp <= 0:
+                continue
+
+            self.state.log(
+                f" - {pokemon.species}"
+            )
+
+        self.state.last_damage = 0
+        self.state.last_target = None
+        self.state.last_move = None
+
+        return turn_order
 
     def get_target(self, attacker):
     """
