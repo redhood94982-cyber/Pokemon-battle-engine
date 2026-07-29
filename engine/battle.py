@@ -348,3 +348,33 @@ class Battle:
                 )
 
         return self.check_win_condition()
+
+     def switch_pokemon(self, team, active_slot, new_pokemon):
+        """
+        Switch a Pokémon into an active battle slot.
+        """
+
+        if new_pokemon.current_hp <= 0:
+            self.state.log(
+                f"{new_pokemon.species} has fainted and cannot be switched in."
+            )
+            return False
+
+        if team == 1:
+            active_team = self.active_p1
+        else:
+            active_team = self.active_p2
+
+        old_pokemon = active_team[active_slot]
+
+        self.state.log(
+            f"{old_pokemon.species} was withdrawn!"
+        )
+
+        active_team[active_slot] = new_pokemon
+
+        self.state.log(
+            f"{new_pokemon.species} entered the battle!"
+        )
+
+        return True
