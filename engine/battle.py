@@ -141,14 +141,20 @@ class Battle:
         )
 
     def get_target(self, attacker):
-      """
-      Return the default target for now.
-      """
+    """
+    Return the default target.
+    """
 
-      if attacker in self.active_p1:
-         return self.active_p2[0]
+    if attacker in self.active_p1:
+        for target in self.active_p2:
+            if target.current_hp > 0:
+                return target
+    else:
+        for target in self.active_p1:
+            if target.current_hp > 0:
+                return target
 
-      return self.active_p1[0]
+    return None
     
     def perform_turn(self):
     """
