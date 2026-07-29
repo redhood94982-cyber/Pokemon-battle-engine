@@ -6,400 +6,129 @@ Core battle controller.
 """
 import random
 
-CRITICAL_HIT_CHANCE = 24
-
 from .battle_state import BattleState
 from .damage import calculate_damage
-from .move import Move
+
+CRITICAL_HIT_CHANCE = 24
+
 
 class Battle:
-    """
-    Main battle controller.
-
-    This class will eventually control:
-    - Battle setup
-    - Turn order
-    - Move execution
-    - Switching
-    - Weather
-    - Terrain
-    - End-of-turn effects
-    - Win/Loss conditions
-    """
+    """Main battle controller."""
 
     def __init__(self):
         self.state = BattleState()
-
         self.player1_team = []
         self.player2_team = []
-
         self.active_p1 = []
         self.active_p2 = []
-
         self.winner = None
-
         self.state.log("Battle initialized.")
 
     def accuracy_check(self, move) -> bool:
-      """
-      Return True if the move hits.
-      """
-
-      if move.accuracy >= 100:
-         return True
-
-      roll = random.randint(1, 100)
-
-      return roll <= move.accuracy
+        if move.accuracy >= 100:
+            return True
+        return random.randint(1, 100) <= move.accuracy
 
     def critical_hit(self) -> bool:
-        """
-        Return True if the attack is a critical hit.
-        """
         return random.randint(1, CRITICAL_HIT_CHANCE) == 1
- 
+
     def register_teams(self, player1_team, player2_team):
-      """
-      Give each player their team.
-      """
-
-      if len(player1_team) != 6:
+        if len(player1_team) != 6:
             raise ValueError("Player 1 must have exactly 6 Pokémon.")
-
         if len(player2_team) != 6:
-           raise ValueError("Player 2 must have exactly 6 Pokémon.")
-
+            raise ValueError("Player 2 must have exactly 6 Pokémon.")
         self.player1_team = player1_team
         self.player2_team = player2_team
-
         self.state.log("Teams registered.")
 
     def start_battle(self):
-        """
-        Send the first two Pokémon onto the field.
-        """
-
-        self.active_p1 = [
-            self.player1_team[0],
-            self.player1_team[1],
-        ]
-
-        self.active_p2 = [
-            self.player2_team[0],
-            self.player2_team[1],
-        ]
-
+        self.active_p1=[self.player1_team[0],self.player1_team[1]]
+        self.active_p2=[self.player2_team[0],self.player2_team[1]]
         self.state.log("Battle started.")
 
-        self.state.log(
-            f"P1 sent out "
-            f"{self.active_p1[0].species} and "
-            f"{self.active_p1[1].species}."
-        )
-
-        self.state.log(
-            f"P2 sent out "
-            f"{self.active_p2[0].species} and "
-            f"{self.active_p2[1].species}."
-        )
     def get_turn_order(self):
-        """
-        Returns all active Pokémon sorted by Speed.
-        Fastest Pokémon goes first.
-        """
-
-        battlers = (
-            self.active_p1 +
-            self.active_p2
-        )
-
-        battlers.sort(
-            key=lambda pokemon: pokemon.speed,
-            reverse=True,
-        )
-
+        battlers=self.active_p1+self.active_p2
+        battlers.sort(key=lambda p:p.speed,reverse=True)
         return battlers
 
-     def begin_turn(self):
-        """
-        Start a new turn.
-        """
-
-        self.state.turn += 1
-
-        self.state.log(
-            f"--- Turn {self.state.turn} ---"
-        )
-
-        turn_order = self.get_turn_order()
-
-        self.state.log(
-            "Turn order:"
-        )
-
-        for pokemon in turn_order:
-            if pokemon.current_hp <= 0:
-                continue
-
-            self.state.log(
-                f" - {pokemon.species}"
-            )
-
-        self.state.last_damage = 0
-        self.state.last_target = None
-        self.state.last_move = None
-
-        return turn_order
+    def begin_turn(self):
+        self.state.turn+=1
+        self.state.last_damage=0
+        self.state.last_target=None
+        self.state.last_move=None
+        self.state.log(f"--- Turn {self.state.turn} ---")
+        return self.get_turn_order()
 
     def get_target(self, attacker):
-    """
-    Return the default target.
-    """
-
-    if attacker in self.active_p1:
-        for target in self.active_p2:
-            if target.current_hp > 0:
+        opponents=self.active_p2 if attacker in self.active_p1 else self.active_p1
+        for target in opponents:
+            if target.current_hp>0:
                 return target
-    else:
-        for target in self.active_p1:
-            if target.current_hp > 0:
-                return target
+        return None
 
-    return None
-    
     def perform_turn(self):
-    """
-    Make each Pokémon act in Speed order.
-    """
-
-    turn_order = self.get_turn_order()
-
-    for pokemon in turn_order:
-
-        if pokemon.current_hp <= 0:
-            continue
-
-        if not pokemon.moves:
-            self.state.log(
-                f"{pokemon.species} has no moves."
-            )
-            continue
-
-        move = pokemon.moves[0]
-
-        if move is None:
-            self.state.log(
-                f"{pokemon.species} has no selected move."
-            )
-            continue
-
-        target = self.get_target(pokemon)
-
-        if target is None:
-            self.state.log(
-                "No valid target."
-            )
-            continue
-
-        if target.current_hp <= 0:
-            continue
-
-        self.use_move(
-            pokemon,
-            move,
-        )
-
-        self.state.log(
-            f"{target.species} was targeted."
-        )
-
-        if not self.accuracy_check(move):
-            self.state.log(
-                f"{pokemon.species}'s attack missed!"
-            )
-            continue
-
-        critical = self.critical_hit()
-
-        if critical:
-            self.state.log(
-                "A critical hit!"
-            )
-
-        damage = calculate_damage(
-            pokemon,
-            target,
-            move,
-            stab=move.move_type in pokemon.types,
-            defender_types=target.types,
-            burned=pokemon.status == "burn",
-            physical=move.category == "Physical",
-            critical=critical,
-        )
-
-        target.current_hp -= damage
-
-        self.state.last_damage = damage
-        self.state.last_target = target
-
-        if target.current_hp < 0:
-            target.current_hp = 0
-
-        self.state.log(
-            f"{target.species} took {damage} damage."
-        )
-
-               if target.current_hp == 0:
-            self.state.log(
-                f"{target.species} fainted!"
-            )
-
-            winner = self.check_win_condition()
-
-            if winner is not None:
-                self.state.log(
-                    "Battle over."
-                )
-                return winner
-
-       return None 
-
-    def use_move(self, pokemon, move):
-    """
-    Have a Pokémon use a move.
-    """
-
-    if pokemon.current_hp <= 0:
-        self.state.log(
-            f"{pokemon.species} has fainted and cannot move."
-        )
-        return None
-
-    if move is None:
-        self.state.log(
-            f"{pokemon.species} has no move selected."
-        )
-        return None
-
-    self.state.log(
-        f"{pokemon.species} used {move.name}!"
-    )
-
-    self.state.last_move = move.name
-
-    if hasattr(move, "pp"):
-        if move.pp <= 0:
-            self.state.log(
-                f"{move.name} has no PP left!"
-            )
-            return None
-
-        move.pp -= 1
-
-    return move
-    def check_win_condition(self):
-      """
-      Return the winning side if the battle is over.
-      """
-
-        p1_alive = any(
-            pokemon.current_hp > 0
-            for pokemon in self.team1
-        )
-
-        p2_alive = any(
-            pokemon.current_hp > 0
-            for pokemon in self.team2
-        )
-
-        if not p1_alive and not p2_alive:
-            self.state.log(
-                "The battle ended in a draw."
-            )
-            return "draw"
-
-        if not p1_alive:
-            self.state.log(
-                "Player 2 wins!"
-            )
-            return "player2"
-
-        if not p2_alive:
-            self.state.log(
-                "Player 1 wins!"
-            )
-            return "player1"
-
-        return None
-
-     def end_turn(self):
-        """
-        Handle end-of-turn effects.
-        """
-
-        for pokemon in self.team1 + self.team2:
-
-            if pokemon.current_hp <= 0:
+        for pokemon in self.get_turn_order():
+            if pokemon.current_hp<=0 or not pokemon.moves:
                 continue
+            move=pokemon.moves[0]
+            target=self.get_target(pokemon)
+            if target is None:
+                continue
+            self.use_move(pokemon,move)
+            if not self.accuracy_check(move):
+                self.state.log(f"{pokemon.species}'s attack missed!")
+                continue
+            crit=self.critical_hit()
+            damage=calculate_damage(
+                pokemon,target,move,
+                stab=move.move_type in pokemon.types,
+                defender_types=target.types,
+                burned=pokemon.status=="burn",
+                physical=move.category=="Physical",
+                critical=crit,
+            )
+            target.current_hp=max(0,target.current_hp-damage)
+            self.state.last_damage=damage
+            self.state.last_target=target
+            if target.current_hp==0:
+                self.state.log(f"{target.species} fainted!")
+                winner=self.check_win_condition()
+                if winner:
+                    return winner
+        return None
 
-            if pokemon.status == "burn":
-                damage = max(1, pokemon.max_hp // 16)
-                pokemon.current_hp = max(
-                    0,
-                    pokemon.current_hp - damage
-                )
+    def use_move(self,pokemon,move):
+        if pokemon.current_hp<=0 or move is None:
+            return
+        self.state.log(f"{pokemon.species} used {move.name}!")
+        self.state.last_move=move.name
+        if hasattr(move,"pp") and move.pp>0:
+            move.pp-=1
 
-                self.state.log(
-                    f"{pokemon.species} was hurt by its burn!"
-                )
+    def check_win_condition(self):
+        p1_alive=any(p.current_hp>0 for p in self.player1_team)
+        p2_alive=any(p.current_hp>0 for p in self.player2_team)
+        if not p1_alive and not p2_alive:
+            return "draw"
+        if not p1_alive:
+            return "player2"
+        if not p2_alive:
+            return "player1"
+        return None
 
-            if pokemon.current_hp == 0:
-                self.state.log(
-                    f"{pokemon.species} fainted!"
-                )
-
+    def end_turn(self):
+        for pokemon in self.player1_team+self.player2_team:
+            if pokemon.current_hp<=0:
+                continue
+            if pokemon.status=="burn":
+                damage=max(1,pokemon.max_hp//16)
+                pokemon.current_hp=max(0,pokemon.current_hp-damage)
         return self.check_win_condition()
 
-     def switch_pokemon(self, team, active_slot, new_pokemon):
-        """
-        Switch a Pokémon into an active battle slot.
-        """
-
-        if new_pokemon.current_hp <= 0:
-            self.state.log(
-                f"{new_pokemon.species} has fainted and cannot be switched in."
-            )
+    def switch_pokemon(self,team,active_slot,new_pokemon):
+        active=self.active_p1 if team==1 else self.active_p2
+        reserve=self.player1_team if team==1 else self.player2_team
+        if new_pokemon not in reserve or new_pokemon.current_hp<=0:
             return False
-
-        if team == 1:
-            active_team = self.active_p1
-            reserve_team = self.team1
-        else:
-            active_team = self.active_p2
-            reserve_team = self.team2
-
-        if new_pokemon not in reserve_team:
-            self.state.log(
-                f"{new_pokemon.species} is not on that team."
-            )
-            return False
-
-        if new_pokemon in active_team:
-            self.state.log(
-                f"{new_pokemon.species} is already active."
-            )
-            return False
-
-        old_pokemon = active_team[active_slot]
-
-        active_team[active_slot] = new_pokemon
-
-        self.state.log(
-            f"{old_pokemon.species} was withdrawn!"
-        )
-
-        self.state.log(
-            f"{new_pokemon.species} entered the battle!"
-        )
-
+        active[active_slot]=new_pokemon
         return True
