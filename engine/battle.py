@@ -238,10 +238,21 @@ class Battle:
             f"{target.species} took {damage} damage."
         )
 
-        if target.current_hp == 0:
+               if target.current_hp == 0:
             self.state.log(
                 f"{target.species} fainted!"
             )
+
+            winner = self.check_win_condition()
+
+            if winner is not None:
+                self.state.log(
+                    "Battle over."
+                )
+                return winner
+
+       return None 
+
     def use_move(self, pokemon, move):
     """
     Have a Pokémon use a move.
