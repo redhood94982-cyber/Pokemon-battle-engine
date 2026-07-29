@@ -55,13 +55,7 @@ def get_type_multiplier(move_type: str, defender_types: list[str]) -> float:
     multiplier = 1.0
 
     for defender_type in defender_types:
-        multiplier *= TYPE_CHART.get(
-            move_type,
-            {}
-        ).get(
-            defender_type,
-            1.0
-        )
+        multiplier *= TYPE_CHART[move_type][defender_type]
 
     return multiplier
 
