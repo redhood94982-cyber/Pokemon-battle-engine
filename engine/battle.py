@@ -168,10 +168,14 @@ class Battle:
         if pokemon.current_hp <= 0:
             continue
 
+        if not pokemon.moves:
+           self.state.log(f"{pokemon.species} has no moves.")
+           continue
+
         move = pokemon.moves[0]
 
         if move is None:
-            continue
+           continue
 
         self.use_move(
             pokemon,
