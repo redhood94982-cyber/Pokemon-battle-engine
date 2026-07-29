@@ -68,14 +68,20 @@ class Pokemon:
         value=((2*base+iv+(ev//4))*self.level)//100+5
         return int(value*nature)
 
+    def _get(self, d, *keys):
+        for k in keys:
+            if k in d:
+                return d[k]
+        raise KeyError(keys[0])
+
     def calculate_stats(self):
         nature=NATURES[self.nature]
-        self.max_hp=self._calc_hp(self.base_stats["HP"],self.ivs["HP"],self.evs["HP"])
-        self.attack=self._calc_other(self.base_stats["Attack"],self.ivs["Attack"],self.evs["Attack"],nature["Attack"])
-        self.defense=self._calc_other(self.base_stats["Defense"],self.ivs["Defense"],self.evs["Defense"],nature["Defense"])
-        self.special_attack=self._calc_other(self.base_stats["Special Attack"],self.ivs["Special Attack"],self.evs["Special Attack"],nature["Special Attack"])
-        self.special_defense=self._calc_other(self.base_stats["Special Defense"],self.ivs["Special Defense"],self.evs["Special Defense"],nature["Special Defense"])
-        self.speed=self._calc_other(self.base_stats["Speed"],self.ivs["Speed"],self.evs["Speed"],nature["Speed"])
+        self.max_hp=self._calc_hp(self._get(self.base_stats,"HP","hp"),self._get(self.ivs,"HP","hp"),self._get(self.evs,"HP","hp"))
+        self.attack=self._calc_other(self._get(self.base_stats,"Attack","attack"),self._get(self.ivs,"Attack","attack"),self._get(self.evs,"Attack","attack"),nature["Attack"])
+        self.defense=self._calc_other(self._get(self.base_stats,"Defense","defense"),self._get(self.ivs,"Defense","defense"),self._get(self.evs,"Defense","defense"),nature["Defense"])
+        self.special_attack=self._calc_other(self._get(self.base_stats,"Special Attack","special_attack","sp_attack"),self._get(self.ivs,"Special Attack","special_attack","sp_attack"),self._get(self.evs,"Special Attack","special_attack","sp_attack"),nature["Special Attack"])
+        self.special_defense=self._calc_other(self._get(self.base_stats,"Special Defense","special_defense","sp_defense"),self._get(self.ivs,"Special Defense","special_defense","sp_defense"),self._get(self.evs,"Special Defense","special_defense","sp_defense"),nature["Special Defense"])
+        self.speed=self._calc_other(self._get(self.base_stats,"Speed","speed"),self._get(self.ivs,"Speed","speed"),self._get(self.evs,"Speed","speed"),nature["Speed"])
         self.current_hp=self.max_hp
 
     def change_stage(self, stat, amount):
