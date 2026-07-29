@@ -175,6 +175,7 @@ class Battle:
         move = pokemon.moves[0]
 
         if move is None:
+           self.state.log(f"{pokemon.species} has no selected move.")
            continue
 
         self.use_move(
