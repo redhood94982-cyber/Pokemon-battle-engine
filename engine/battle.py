@@ -342,17 +342,6 @@ class Battle:
                     f"{pokemon.species} was hurt by its burn!"
                 )
 
-            elif pokemon.status == "poison":
-                damage = max(1, pokemon.max_hp // 8)
-                pokemon.current_hp = max(
-                    0,
-                    pokemon.current_hp - damage
-                )
-
-                self.state.log(
-                    f"{pokemon.species} was hurt by poison!"
-                )
-
             if pokemon.current_hp == 0:
                 self.state.log(
                     f"{pokemon.species} fainted!"
