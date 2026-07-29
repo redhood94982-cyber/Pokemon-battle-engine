@@ -222,3 +222,16 @@ class Battle:
         active[active_slot]=new_pokemon
         self.state.log(f"Go, {new_pokemon.species}!")
         return True
+
+
+    def replace_fainted(self, team:int):
+        active=self.active_p1 if team==1 else self.active_p2
+        reserve=self.player1_team if team==1 else self.player2_team
+        for i,p in enumerate(active):
+            if p.current_hp<=0:
+                for cand in reserve:
+                    if cand.current_hp>0 and cand not in active:
+                        active[i]=cand
+                        self.state.log(f"Go, {cand.species}!")
+                        break
+

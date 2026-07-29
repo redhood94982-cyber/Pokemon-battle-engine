@@ -26,6 +26,14 @@ class Move:
     protectable: bool = True
     spread_move: bool = False
 
+    stat_changes: dict | None = None
+    status_effect: str | None = None
+    effect_chance: int = 100
+    drain: float = 0.0
+    recoil: float = 0.0
+    healing: float = 0.0
+
+
     def has_pp(self) -> bool:
         return self.pp > 0
 
