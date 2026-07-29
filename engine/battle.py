@@ -180,8 +180,12 @@ class Battle:
 
         target = self.get_target(pokemon)
 
-        if target.current_hp <= 0:
+        if target is None:
+            self.state.log("No valid target.")
             continue
+
+        if target.current_hp <= 0:
+           continue
 
         self.state.log(
             f"{target.species} was targeted."
