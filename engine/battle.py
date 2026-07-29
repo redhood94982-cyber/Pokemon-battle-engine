@@ -275,3 +275,37 @@ class Battle:
         move.pp -= 1
 
     return move
+    def check_win_condition(self):
+      """
+      Return the winning side if the battle is over.
+      """
+
+        p1_alive = any(
+            pokemon.current_hp > 0
+            for pokemon in self.team1
+        )
+
+        p2_alive = any(
+            pokemon.current_hp > 0
+            for pokemon in self.team2
+        )
+
+        if not p1_alive and not p2_alive:
+            self.state.log(
+                "The battle ended in a draw."
+            )
+            return "draw"
+
+        if not p1_alive:
+            self.state.log(
+                "Player 2 wins!"
+            )
+            return "player2"
+
+        if not p2_alive:
+            self.state.log(
+                "Player 1 wins!"
+            )
+            return "player1"
+
+        return None
