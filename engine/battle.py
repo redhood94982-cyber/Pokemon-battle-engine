@@ -139,6 +139,16 @@ class Battle:
         self.state.log(
             f" - {pokemon.species}"
         )
+
+    def get_target(self, attacker):
+      """
+      Return the default target for now.
+      """
+
+      if attacker in self.active_p1:
+         return self.active_p2[0]
+
+      return self.active_p1[0]
     
     def perform_turn(self):
     """
@@ -162,7 +172,7 @@ class Battle:
             move,
         )
 
-        target = self.active_p2[0]
+        target = self.get_target(pokemon)
 
         if target.current_hp <= 0:
             continue
