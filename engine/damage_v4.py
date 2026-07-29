@@ -10,7 +10,7 @@ Generation 6+ damage formula.
 
 import math
 import random
-from .type_chart import TYPE_CHART
+from .Database.type_chart import TYPE_CHART
 
 def apply_random_roll(base_damage: int) -> int:
     """Apply the standard 85–100% damage roll."""
