@@ -27,7 +27,9 @@ class Battle:
     def accuracy_check(self, move) -> bool:
         if move.accuracy >= 100:
             return True
-        return random.randint(1, 100) <= move.accuracy
+        acc=getattr(move,'accuracy',100)
+        a=getattr(getattr(move,'user',None),'stat_stages',{}).get('accuracy',0) if False else 0
+        return random.randint(1,100)<=acc
 
     def critical_hit(self) -> bool:
         return random.randint(1, CRITICAL_HIT_CHANCE) == 1
@@ -83,7 +85,7 @@ class Battle:
     def get_turn_order(self):
         battlers=[p for p in (self.active_p1+self.active_p2) if p.current_hp>0]
         random.shuffle(battlers)
-        battlers.sort(key=lambda p:p.speed, reverse=True)
+        battlers.sort(key=lambda p:getattr(p,'get_modified_stat',lambda s:p.speed)('spe'), reverse=True)
         return battlers
 
     def begin_turn(self):
