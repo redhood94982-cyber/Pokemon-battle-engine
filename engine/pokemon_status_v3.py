@@ -8,7 +8,8 @@ Temporary implementation:
 - Stat calculations will be added next.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from .Database.natures import NATURES, field
 from typing import List, Dict, Optional
 
 
@@ -55,3 +56,20 @@ class Pokemon:
 
     def damage(self, amount: int):
         self.current_hp = max(0, self.current_hp - amount)
+
+def _calc_hp(base, iv, ev, level):
+    return ((2*base + iv + (ev//4))*level)//100 + level + 10
+
+def _calc_other(base, iv, ev, level, nature):
+    value=((2*base+iv+(ev//4))*level)//100+5
+    return int(value*nature)
+
+def calculate_stats(self):
+    nature=NATURES[self.nature]
+    self.hp=_calc_hp(self.base_stats["HP"],self.ivs["HP"],self.evs["HP"],self.level)
+    self.attack=_calc_other(self.base_stats["Attack"],self.ivs["Attack"],self.evs["Attack"],self.level,nature["Attack"])
+    self.defense=_calc_other(self.base_stats["Defense"],self.ivs["Defense"],self.evs["Defense"],self.level,nature["Defense"])
+    self.special_attack=_calc_other(self.base_stats["Special Attack"],self.ivs["Special Attack"],self.evs["Special Attack"],self.level,nature["Special Attack"])
+    self.special_defense=_calc_other(self.base_stats["Special Defense"],self.ivs["Special Defense"],self.evs["Special Defense"],self.level,nature["Special Defense"])
+    self.speed=_calc_other(self.base_stats["Speed"],self.ivs["Speed"],self.evs["Speed"],self.level,nature["Speed"])
+    self.current_hp=self.hp
