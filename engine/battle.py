@@ -243,14 +243,35 @@ class Battle:
                 f"{target.species} fainted!"
             )
     def use_move(self, pokemon, move):
-        """
-        Have a Pokémon use a move.
-        """
+    """
+    Have a Pokémon use a move.
+    """
 
+    if pokemon.current_hp <= 0:
         self.state.log(
-            f"{pokemon.species} used {move.name}!"
+            f"{pokemon.species} has fainted and cannot move."
         )
-        
-        self.state.last_move = move.name
+        return None
 
-        return move
+    if move is None:
+        self.state.log(
+            f"{pokemon.species} has no move selected."
+        )
+        return None
+
+    self.state.log(
+        f"{pokemon.species} used {move.name}!"
+    )
+
+    self.state.last_move = move.name
+
+    if hasattr(move, "pp"):
+        if move.pp <= 0:
+            self.state.log(
+                f"{move.name} has no PP left!"
+            )
+            return None
+
+        move.pp -= 1
+
+    return move
