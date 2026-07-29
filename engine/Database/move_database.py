@@ -3,39 +3,39 @@
 MOVE_DATABASE = {
     "air_slash": {
         "name": "Air Slash",
-        "type": "",
-        "category": "",
-        "power": 0,
-        "accuracy": 100,
-        "pp": 0,
-        "priority": 0,
-        "target": "selected",
-        "makes_contact": False,
-        "protectable": True,
-        "spread_move": False,
-        "secondary_effect": None,
-        "effect_chance": 0,
+        "type": 'Flying'
+        "category": 'Special'
+        "power": 75
+        "accuracy": 95
+        "pp": 15
+        "priority": 0
+        "target": 'selected'
+        "makes_contact": False
+        "protectable": True
+        "spread_move": False
+        "secondary_effect": 'flinch'
+        "effect_chance": 30
         "stat_changes": {},
-        "status_inflicted": None,
-        "notes": "",
+        "status_inflicted": None
+        "notes": 'High critical-pressure special attack'
     },
     "aura_sphere": {
         "name": "Aura Sphere",
-        "type": "",
-        "category": "",
-        "power": 0,
-        "accuracy": 100,
-        "pp": 0,
-        "priority": 0,
-        "target": "selected",
-        "makes_contact": False,
-        "protectable": True,
-        "spread_move": False,
-        "secondary_effect": None,
-        "effect_chance": 0,
+        "type": 'Fighting'
+        "category": 'Special'
+        "power": 80
+        "accuracy": 0
+        "pp": 20
+        "priority": 0
+        "target": 'selected'
+        "makes_contact": False
+        "protectable": True
+        "spread_move": False
+        "secondary_effect": None
+        "effect_chance": 0
         "stat_changes": {},
-        "status_inflicted": None,
-        "notes": "",
+        "status_inflicted": None
+        "notes": 'Never misses'
     },
     "aurora_veil": {
         "name": "Aurora Veil",
@@ -57,21 +57,21 @@ MOVE_DATABASE = {
     },
     "blizzard": {
         "name": "Blizzard",
-        "type": "",
-        "category": "",
-        "power": 0,
-        "accuracy": 100,
-        "pp": 0,
-        "priority": 0,
-        "target": "selected",
-        "makes_contact": False,
-        "protectable": True,
-        "spread_move": False,
-        "secondary_effect": None,
-        "effect_chance": 0,
+        "type": 'Ice'
+        "category": 'Special'
+        "power": 110
+        "accuracy": 70
+        "pp": 5
+        "priority": 0
+        "target": 'all_adjacent_foes'
+        "makes_contact": False
+        "protectable": True
+        "spread_move": True
+        "secondary_effect": 'freeze'
+        "effect_chance": 10
         "stat_changes": {},
-        "status_inflicted": None,
-        "notes": "",
+        "status_inflicted": None
+        "notes": '100% accurate in snow'
     },
     "close_combat": {
         "name": "Close Combat",
@@ -471,21 +471,21 @@ MOVE_DATABASE = {
     },
     "protect": {
         "name": "Protect",
-        "type": "",
-        "category": "",
-        "power": 0,
-        "accuracy": 100,
-        "pp": 0,
-        "priority": 0,
-        "target": "selected",
-        "makes_contact": False,
-        "protectable": True,
-        "spread_move": False,
-        "secondary_effect": None,
-        "effect_chance": 0,
+        "type": 'Normal'
+        "category": 'Status'
+        "power": 0
+        "accuracy": 0
+        "pp": 10
+        "priority": 4
+        "target": 'self'
+        "makes_contact": False
+        "protectable": False
+        "spread_move": False
+        "secondary_effect": None
+        "effect_chance": 0
         "stat_changes": {},
-        "status_inflicted": None,
-        "notes": "",
+        "status_inflicted": None
+        "notes": 'Blocks most moves'
     },
     "rock_slide": {
         "name": "Rock Slide",
@@ -597,21 +597,21 @@ MOVE_DATABASE = {
     },
     "tailwind": {
         "name": "Tailwind",
-        "type": "",
-        "category": "",
-        "power": 0,
-        "accuracy": 100,
-        "pp": 0,
-        "priority": 0,
-        "target": "selected",
-        "makes_contact": False,
-        "protectable": True,
-        "spread_move": False,
-        "secondary_effect": None,
-        "effect_chance": 0,
+        "type": 'Flying'
+        "category": 'Status'
+        "power": 0
+        "accuracy": 0
+        "pp": 15
+        "priority": 0
+        "target": 'ally_side'
+        "makes_contact": False
+        "protectable": False
+        "spread_move": False
+        "secondary_effect": None
+        "effect_chance": 0
         "stat_changes": {},
-        "status_inflicted": None,
-        "notes": "",
+        "status_inflicted": None
+        "notes": 'Doubles Speed for 4 turns'
     },
     "toxic": {
         "name": "Toxic",
