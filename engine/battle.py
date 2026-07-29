@@ -362,16 +362,30 @@ class Battle:
 
         if team == 1:
             active_team = self.active_p1
+            reserve_team = self.team1
         else:
             active_team = self.active_p2
+            reserve_team = self.team2
+
+        if new_pokemon not in reserve_team:
+            self.state.log(
+                f"{new_pokemon.species} is not on that team."
+            )
+            return False
+
+        if new_pokemon in active_team:
+            self.state.log(
+                f"{new_pokemon.species} is already active."
+            )
+            return False
 
         old_pokemon = active_team[active_slot]
+
+        active_team[active_slot] = new_pokemon
 
         self.state.log(
             f"{old_pokemon.species} was withdrawn!"
         )
-
-        active_team[active_slot] = new_pokemon
 
         self.state.log(
             f"{new_pokemon.species} entered the battle!"
