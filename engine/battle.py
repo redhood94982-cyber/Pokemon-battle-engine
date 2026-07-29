@@ -320,3 +320,42 @@ class Battle:
             return "player1"
 
         return None
+
+     def end_turn(self):
+        """
+        Handle end-of-turn effects.
+        """
+
+        for pokemon in self.team1 + self.team2:
+
+            if pokemon.current_hp <= 0:
+                continue
+
+            if pokemon.status == "burn":
+                damage = max(1, pokemon.max_hp // 16)
+                pokemon.current_hp = max(
+                    0,
+                    pokemon.current_hp - damage
+                )
+
+                self.state.log(
+                    f"{pokemon.species} was hurt by its burn!"
+                )
+
+            elif pokemon.status == "poison":
+                damage = max(1, pokemon.max_hp // 8)
+                pokemon.current_hp = max(
+                    0,
+                    pokemon.current_hp - damage
+                )
+
+                self.state.log(
+                    f"{pokemon.species} was hurt by poison!"
+                )
+
+            if pokemon.current_hp == 0:
+                self.state.log(
+                    f"{pokemon.species} fainted!"
+                )
+
+        return self.check_win_condition()
