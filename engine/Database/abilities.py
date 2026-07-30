@@ -300,7 +300,7 @@ ABILITIES = {
     "Flare Boost": {
         "description": "Boosts Special Attack while the Pokémon is burned.",
         "triggers": ["Always Active"]
-    }
+    },
     "Flash Fire": {
         "description": "Grants immunity to Fire-type moves and boosts Fire-type moves after being hit.",
         "triggers": ["On Damage Taken", "Always Active"]
