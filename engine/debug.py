@@ -2,7 +2,7 @@
 Development debug utilities. Safe to import; no gameplay effects.
 """
 
-DEBUG_ENABLED = False
+DEBUG_ENABLED = True
 
 def set_debug(enabled: bool):
     global DEBUG_ENABLED
