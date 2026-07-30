@@ -1191,4 +1191,59 @@ ABILITIES = {
         "triggers": ["Always Active"]
     }
 
+
+    ,
+    "Wandering Spirit": {
+        "description": "Swaps Abilities with a Pokémon that makes contact.",
+        "triggers": ["On Contact"]
+    },
+    "Water Absorb": {
+        "description": "Grants immunity to Water-type moves and restores HP when hit by one.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Water Bubble": {
+        "description": "Boosts Water-type moves, prevents burns, and halves Fire-type damage.",
+        "triggers": ["Always Active", "On Damage Taken"]
+    },
+    "Water Compaction": {
+        "description": "Sharply raises Defense when hit by a Water-type move.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Water Veil": {
+        "description": "Prevents the Pokémon from being burned.",
+        "triggers": ["Always Active"]
+    },
+    "Weak Armor": {
+        "description": "Lowers Defense and raises Speed when hit by a physical move.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Well-Baked Body": {
+        "description": "Grants immunity to Fire-type moves and sharply raises Defense when hit by one.",
+        "triggers": ["On Damage Taken"]
+    },
+    "White Smoke": {
+        "description": "Prevents other Pokémon from lowering this Pokémon's stats.",
+        "triggers": ["Always Active"]
+    },
+    "Wimp Out": {
+        "description": "Forces the Pokémon to switch out when its HP drops below half.",
+        "triggers": ["On HP Threshold"]
+    },
+    "Wind Rider": {
+        "description": "Grants immunity to wind moves and raises Attack when affected by one or Tailwind.",
+        "triggers": ["On Move Targeted", "On Field Effect"]
+    },
+    "Wonder Guard": {
+        "description": "Only super-effective moves can damage the Pokémon.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Wonder Skin": {
+        "description": "Makes status moves used against the Pokémon less accurate.",
+        "triggers": ["On Status Move Targeted"]
+    },
+    "Zen Mode": {
+        "description": "Changes Darmanitan's form when its HP falls below half.",
+        "triggers": ["On HP Threshold"]
+    }
+
 }
