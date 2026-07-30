@@ -24,3 +24,22 @@ def debug_listener(pokemon, ability, trigger):
 def debug_move(event,pokemon=None,move=None,target=None):
     if not DEBUG_ENABLED: return
     print(f'[DEBUG] {event} | {pokemon} | {move} | {target}')
+
+
+def debug_switch(event, pokemon=None, side=None):
+    if not DEBUG_ENABLED:
+        return
+    print(f"[DEBUG] SWITCH: {event}")
+    if pokemon is not None:
+        print(f"    pokemon: {getattr(pokemon,'name',pokemon)}")
+    if side is not None:
+        print(f"    side: {side}")
+
+def debug_status(event, pokemon=None, status=None):
+    if not DEBUG_ENABLED:
+        return
+    print(f"[DEBUG] STATUS: {event}")
+    if pokemon is not None:
+        print(f"    pokemon: {getattr(pokemon,'name',pokemon)}")
+    if status is not None:
+        print(f"    status: {status}")
