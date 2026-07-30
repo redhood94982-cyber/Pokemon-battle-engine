@@ -8,6 +8,7 @@ import random
 
 from .battle_state import BattleState
 from .damage_v4 import calculate_damage
+from .debug import debug_event
 
 CRITICAL_HIT_CHANCE = 24
 
@@ -23,6 +24,7 @@ class Battle:
         self.active_p2 = []
         self.winner = None
         self.state.log("Battle initialized.")
+        debug_event("Battle Initialized")
 
     def accuracy_check(self, move) -> bool:
         if move.accuracy >= 100:
