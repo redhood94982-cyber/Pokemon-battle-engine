@@ -8,7 +8,7 @@ import random
 
 from .battle_state import BattleState
 from .damage_v4 import calculate_damage
-from .debug import debug_move, debug_event, debug_switch, debug_status
+from .debug import debug_move, debug_event, debug_switch, debug_status, debug_field
 
 CRITICAL_HIT_CHANCE = 24
 

@@ -43,3 +43,7 @@ def debug_status(event, pokemon=None, status=None):
         print(f"    pokemon: {getattr(pokemon,'name',pokemon)}")
     if status is not None:
         print(f"    status: {status}")
+
+
+def debug_field(event, **kwargs):
+    return debug_event(f'FIELD:{event}', **kwargs)

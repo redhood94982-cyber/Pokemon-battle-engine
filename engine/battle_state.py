@@ -1,5 +1,5 @@
 try:
-    from .debug import debug_move, debug_event, debug_switch, debug_status
+    from .debug import debug_move, debug_event, debug_switch, debug_status, debug_field
 except Exception:
     def debug_event(*a,**k):
         return
