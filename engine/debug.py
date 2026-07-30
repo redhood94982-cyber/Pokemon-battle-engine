@@ -19,3 +19,8 @@ def debug_listener(pokemon, ability, trigger):
     if not DEBUG_ENABLED:
         return
     print(f"[DEBUG] LISTENER: {getattr(pokemon,'name',pokemon)} | {ability} | {trigger}")
+
+
+def debug_move(event,pokemon=None,move=None,target=None):
+    if not DEBUG_ENABLED: return
+    print(f'[DEBUG] {event} | {pokemon} | {move} | {target}')
