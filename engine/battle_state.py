@@ -1,3 +1,9 @@
+try:
+    from .debug import debug_event
+except Exception:
+    def debug_event(*a,**k):
+        return
+
 """
 Pokemon Battle Engine
 battle_state.py

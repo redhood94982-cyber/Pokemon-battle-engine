@@ -17,6 +17,7 @@ class Battle:
     """Main battle controller."""
 
     def __init__(self):
+        debug_event('Battle Initialized')
         self.state = BattleState()
         self.player1_team = []
         self.player2_team = []
@@ -179,6 +180,7 @@ class Battle:
         return None
 
     def end_turn(self):
+        debug_event('Turn End')
         for pokemon in self.player1_team+self.player2_team:
             if pokemon.current_hp<=0:
                 continue
