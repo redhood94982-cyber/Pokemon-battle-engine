@@ -365,4 +365,183 @@ ABILITIES = {
         "triggers": ["Always Active"]
     }
 
+
+    ,
+    "Galvanize": {
+        "description": "Normal-type moves become Electric-type moves and receive a power boost.",
+        "triggers": ["Before Move"]
+    },
+    "Gluttony": {
+        "description": "Causes the Pokémon to eat its Berry earlier than usual.",
+        "triggers": ["On HP Threshold"]
+    },
+    "Good as Gold": {
+        "description": "Grants immunity to status moves used by other Pokémon.",
+        "triggers": ["Always Active"]
+    },
+    "Gooey": {
+        "description": "Lowers the Speed of a Pokémon that makes contact.",
+        "triggers": ["On Contact"]
+    },
+    "Gorilla Tactics": {
+        "description": "Boosts Attack but restricts the Pokémon to its first selected move.",
+        "triggers": ["Always Active"]
+    },
+    "Grass Pelt": {
+        "description": "Raises Defense while Grassy Terrain is active.",
+        "triggers": ["On Terrain"]
+    },
+    "Grassy Surge": {
+        "description": "Creates Grassy Terrain upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Grim Neigh": {
+        "description": "Raises Special Attack after knocking out a Pokémon.",
+        "triggers": ["On Faint"]
+    },
+    "Guard Dog": {
+        "description": "Prevents forced switching and raises Attack when intimidated.",
+        "triggers": ["Always Active", "On Stat Lowered"]
+    },
+    "Gulp Missile": {
+        "description": "Changes form after Surf or Dive and retaliates when hit.",
+        "triggers": ["After Move", "On Damage Taken"]
+    },
+    "Guts": {
+        "description": "Boosts Attack while affected by a major status condition.",
+        "triggers": ["Always Active"]
+    }
+
+
+    ,
+    "Hadron Engine": {
+        "description": "Creates Electric Terrain on entry and boosts the user's Special Attack while Electric Terrain is active.",
+        "triggers": ["On Switch-In", "On Terrain"]
+    },
+    "Harvest": {
+        "description": "May restore a consumed Berry at the end of the turn, with a higher chance in sunshine.",
+        "triggers": ["End of Turn", "On Weather"]
+    },
+    "Healer": {
+        "description": "May cure an adjacent ally's major status condition at the end of the turn.",
+        "triggers": ["End of Turn"]
+    },
+    "Heatproof": {
+        "description": "Reduces damage from Fire-type moves and burn damage.",
+        "triggers": ["Always Active"]
+    },
+    "Heavy Metal": {
+        "description": "Doubles the Pokémon's weight.",
+        "triggers": ["Always Active"]
+    },
+    "Honey Gather": {
+        "description": "May gather Honey outside of battle.",
+        "triggers": []
+    },
+    "Hospitality": {
+        "description": "Restores an ally's HP when entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Huge Power": {
+        "description": "Doubles the Pokémon's Attack stat.",
+        "triggers": ["Always Active"]
+    },
+    "Hunger Switch": {
+        "description": "Switches Morpeko between Full Belly Mode and Hangry Mode at the end of each turn.",
+        "triggers": ["End of Turn"]
+    },
+    "Hustle": {
+        "description": "Raises Attack but lowers the accuracy of physical moves.",
+        "triggers": ["Always Active"]
+    },
+    "Hydration": {
+        "description": "Cures status conditions at the end of the turn while it is raining.",
+        "triggers": ["End of Turn", "On Weather"]
+    },
+    "Hyper Cutter": {
+        "description": "Prevents other Pokémon from lowering this Pokémon's Attack stat.",
+        "triggers": ["Always Active"]
+    }
+
+
+    ,
+    "Ice Body": {
+        "description": "Restores HP at the end of each turn during snow.",
+        "triggers": ["End of Turn", "On Weather"]
+    },
+    "Ice Face": {
+        "description": "Prevents damage from the first physical hit and is restored during snow.",
+        "triggers": ["On Damage Taken", "On Weather"]
+    },
+    "Ice Scales": {
+        "description": "Halves damage taken from special moves.",
+        "triggers": ["Always Active"]
+    },
+    "Illuminate": {
+        "description": "Has no effect during battle.",
+        "triggers": []
+    },
+    "Illusion": {
+        "description": "Disguises the Pokémon as the last healthy party member until the disguise is broken.",
+        "triggers": ["On Switch-In", "On Damage Taken"]
+    },
+    "Immunity": {
+        "description": "Prevents the Pokémon from being poisoned.",
+        "triggers": ["Always Active"]
+    },
+    "Imposter": {
+        "description": "Transforms into the opposing Pokémon upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Infiltrator": {
+        "description": "Allows moves to ignore the target's substitutes and protective barriers.",
+        "triggers": ["Always Active"]
+    },
+    "Innards Out": {
+        "description": "Damages the attacker equal to this Pokémon's remaining HP when it faints.",
+        "triggers": ["On Faint"]
+    },
+    "Inner Focus": {
+        "description": "Prevents flinching and ignores Intimidate.",
+        "triggers": ["Always Active"]
+    },
+    "Insomnia": {
+        "description": "Prevents the Pokémon from falling asleep.",
+        "triggers": ["Always Active"]
+    },
+    "Intimidate": {
+        "description": "Lowers the Attack of adjacent opposing Pokémon upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Intrepid Sword": {
+        "description": "Raises Attack upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Iron Barbs": {
+        "description": "Damages a Pokémon that makes contact.",
+        "triggers": ["On Contact"]
+    },
+    "Iron Fist": {
+        "description": "Boosts the power of punching moves.",
+        "triggers": ["Always Active"]
+    }
+
+
+    ,
+    "Justified": {
+        "description": "Raises Attack when hit by a Dark-type move.",
+        "triggers": ["On Damage Taken"]
+    }
+
+
+    ,
+    "Keen Eye": {
+        "description": "Prevents other Pokémon from lowering this Pokémon's Accuracy and ignores the target's evasiveness.",
+        "triggers": ["Always Active"]
+    },
+    "Klutz": {
+        "description": "Prevents the Pokémon from using the effects of its held item.",
+        "triggers": ["Always Active"]
+    }
+
 }
