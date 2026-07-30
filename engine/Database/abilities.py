@@ -300,30 +300,7 @@ ABILITIES = {
     "Flare Boost": {
         "description": "Boosts Special Attack while the Pokémon is burned.",
         "triggers": ["Always Active"]
-    },
-    "Flash Fire": {
-        "description": "Grants immunity to Fire-type moves and boosts Fire-type moves after being hit.",
-        "triggers": ["On Damage Taken", "Always Active"]
     }
-
-
-    ,
-    "Fairy Aura": {
-        "description": "Boosts the power of Fairy-type moves used by all active Pokémon.",
-        "triggers": ["Always Active"]
-    },
-    "Filter": {
-        "description": "Reduces damage taken from super-effective moves.",
-        "triggers": ["On Damage Taken"]
-    },
-    "Flame Body": {
-        "description": "May burn a Pokémon that makes contact.",
-        "triggers": ["On Contact"]
-    },
-    "Flare Boost": {
-        "description": "Boosts Special Attack while the Pokémon is burned.",
-        "triggers": ["Always Active"]
-    },
     "Flash Fire": {
         "description": "Grants immunity to Fire-type moves and boosts Fire-type moves after being hit.",
         "triggers": ["On Damage Taken", "Always Active"]
@@ -541,6 +518,676 @@ ABILITIES = {
     },
     "Klutz": {
         "description": "Prevents the Pokémon from using the effects of its held item.",
+        "triggers": ["Always Active"]
+    }
+
+
+    ,
+    "Leaf Guard": {
+        "description": "Prevents status conditions while harsh sunlight is active.",
+        "triggers": ["On Weather"]
+    },
+    "Levitate": {
+        "description": "Grants immunity to Ground-type moves and the effects of grounded hazards and terrain.",
+        "triggers": ["Always Active"]
+    },
+    "Libero": {
+        "description": "Changes the user's type to match the type of the move it is about to use once upon entering battle.",
+        "triggers": ["Before Move"]
+    },
+    "Light Metal": {
+        "description": "Halves the Pokémon's weight.",
+        "triggers": ["Always Active"]
+    },
+    "Lightning Rod": {
+        "description": "Draws Electric-type moves to the user, grants immunity to them, and raises Special Attack when hit.",
+        "triggers": ["On Move Targeted", "On Damage Taken"]
+    },
+    "Limber": {
+        "description": "Prevents the Pokémon from becoming paralyzed.",
+        "triggers": ["Always Active"]
+    },
+    "Lingering Aroma": {
+        "description": "Replaces the attacker's Ability with Lingering Aroma after a contact move.",
+        "triggers": ["On Contact"]
+    },
+    "Liquid Ooze": {
+        "description": "Damages Pokémon that attempt to drain HP from this Pokémon.",
+        "triggers": ["On HP Drained"]
+    },
+    "Liquid Voice": {
+        "description": "Sound-based moves become Water-type moves.",
+        "triggers": ["Before Move"]
+    },
+    "Long Reach": {
+        "description": "Allows contact moves to be used without making physical contact.",
+        "triggers": ["Before Move"]
+    }
+
+
+    ,
+    "Magic Bounce": {
+        "description": "Reflects most status moves back at the user instead of allowing them to take effect.",
+        "triggers": ["On Status Move Targeted"]
+    },
+    "Magic Guard": {
+        "description": "Prevents all indirect damage except damage from direct attacks.",
+        "triggers": ["Always Active"]
+    },
+    "Magician": {
+        "description": "Steals the target's held item after damaging it if the user is not holding an item.",
+        "triggers": ["After Move"]
+    },
+    "Magma Armor": {
+        "description": "Prevents the Pokémon from becoming frozen.",
+        "triggers": ["Always Active"]
+    },
+    "Magnet Pull": {
+        "description": "Prevents adjacent Steel-type Pokémon from switching out.",
+        "triggers": ["Always Active"]
+    },
+    "Marvel Scale": {
+        "description": "Raises Defense while the Pokémon is affected by a major status condition.",
+        "triggers": ["Always Active"]
+    },
+    "Mega Launcher": {
+        "description": "Boosts the power of aura and pulse moves.",
+        "triggers": ["Always Active"]
+    },
+    "Merciless": {
+        "description": "Always lands critical hits against poisoned targets.",
+        "triggers": ["Before Move"]
+    },
+    "Mimicry": {
+        "description": "Changes the Pokémon's type to match the current terrain.",
+        "triggers": ["On Terrain"]
+    },
+    "Minus": {
+        "description": "Raises Special Attack when an ally has Plus or Minus.",
+        "triggers": ["Always Active"]
+    },
+    "Mirror Armor": {
+        "description": "Reflects stat reductions back to the Pokémon that caused them.",
+        "triggers": ["On Stat Lowered"]
+    },
+    "Misty Surge": {
+        "description": "Creates Misty Terrain upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Mold Breaker": {
+        "description": "Moves ignore the target's Ability when applicable.",
+        "triggers": ["Before Move"]
+    },
+    "Moody": {
+        "description": "Raises one stat by two stages and lowers another by one stage at the end of each turn.",
+        "triggers": ["End of Turn"]
+    },
+    "Motor Drive": {
+        "description": "Grants immunity to Electric-type moves and raises Speed when hit by one.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Moxie": {
+        "description": "Raises Attack after knocking out a Pokémon.",
+        "triggers": ["On Faint"]
+    },
+    "Multiscale": {
+        "description": "Reduces damage taken when the Pokémon is at full HP.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Multitype": {
+        "description": "Changes Arceus's type to match the Plate or Z-Crystal it is holding.",
+        "triggers": ["Always Active"]
+    },
+    "Mummy": {
+        "description": "Replaces the attacker's Ability with Mummy after a contact move.",
+        "triggers": ["On Contact"]
+    },
+    "Mycelium Might": {
+        "description": "Status moves always move last but ignore the target's Ability.",
+        "triggers": ["Before Move"]
+    }
+
+
+    ,
+    "Natural Cure": {
+        "description": "Cures the Pokémon's major status condition when it switches out.",
+        "triggers": ["On Switch-Out"]
+    },
+    "Neuroforce": {
+        "description": "Boosts the power of super-effective moves.",
+        "triggers": ["Before Move"]
+    },
+    "Neutralizing Gas": {
+        "description": "Suppresses the effects of all other Abilities while this Pokémon is active.",
+        "triggers": ["On Switch-In", "On Switch-Out"]
+    },
+    "No Guard": {
+        "description": "Ensures that all moves used by and against this Pokémon bypass accuracy checks.",
+        "triggers": ["Always Active"]
+    },
+    "Normalize": {
+        "description": "Makes all moves Normal-type and boosts their power.",
+        "triggers": ["Before Move"]
+    }
+
+
+    ,
+    "Oblivious": {
+        "description": "Prevents infatuation, Taunt, Intimidate, and similar mental effects.",
+        "triggers": ["Always Active"]
+    },
+    "Opportunist": {
+        "description": "Copies an opposing Pokémon's stat increases when they occur.",
+        "triggers": ["On Stat Raised"]
+    },
+    "Orichalcum Pulse": {
+        "description": "Creates harsh sunlight upon entering battle and boosts the user's Attack while sunlight is active.",
+        "triggers": ["On Switch-In", "On Weather"]
+    },
+    "Overcoat": {
+        "description": "Protects the Pokémon from powder moves and damage from weather.",
+        "triggers": ["Always Active"]
+    },
+    "Overgrow": {
+        "description": "Boosts the power of Grass-type moves when HP is low.",
+        "triggers": ["On HP Threshold"]
+    },
+    "Own Tempo": {
+        "description": "Prevents confusion and ignores Intimidate.",
+        "triggers": ["Always Active"]
+    }
+
+
+    ,
+    "Parental Bond": {
+        "description": "Allows damaging moves to hit twice, with the second hit dealing reduced damage.",
+        "triggers": ["Before Move"]
+    },
+    "Pastel Veil": {
+        "description": "Prevents poisoning for the Pokémon and its allies and cures allies of poison on entry.",
+        "triggers": ["Always Active", "On Switch-In"]
+    },
+    "Perish Body": {
+        "description": "Causes both Pokémon to gain Perish Song's effect after contact.",
+        "triggers": ["On Contact"]
+    },
+    "Pickpocket": {
+        "description": "Steals the attacker's held item after being hit by a contact move.",
+        "triggers": ["On Contact"]
+    },
+    "Pickup": {
+        "description": "May obtain or recover a used item.",
+        "triggers": ["End of Turn"]
+    },
+    "Pixilate": {
+        "description": "Normal-type moves become Fairy-type moves and receive a power boost.",
+        "triggers": ["Before Move"]
+    },
+    "Plus": {
+        "description": "Raises Special Attack when an ally has Plus or Minus.",
+        "triggers": ["Always Active"]
+    },
+    "Poison Heal": {
+        "description": "Restores HP instead of taking poison damage while poisoned.",
+        "triggers": ["End of Turn"]
+    },
+    "Poison Point": {
+        "description": "May poison a Pokémon that makes contact.",
+        "triggers": ["On Contact"]
+    },
+    "Poison Puppeteer": {
+        "description": "Confuses a target that becomes poisoned by this Pokémon.",
+        "triggers": ["On Status Inflicted"]
+    },
+    "Poison Touch": {
+        "description": "May poison a target hit by a contact move.",
+        "triggers": ["After Move"]
+    },
+    "Power Construct": {
+        "description": "Changes Zygarde into its Complete Forme when its HP falls below half.",
+        "triggers": ["On HP Threshold"]
+    },
+    "Power of Alchemy": {
+        "description": "Copies the Ability of a fainted ally.",
+        "triggers": ["On Ally Faint"]
+    },
+    "Pressure": {
+        "description": "Causes opposing Pokémon to use extra PP.",
+        "triggers": ["Always Active"]
+    },
+    "Primordial Sea": {
+        "description": "Creates heavy rain that nullifies Fire-type moves.",
+        "triggers": ["On Switch-In", "On Weather"]
+    },
+    "Prism Armor": {
+        "description": "Reduces damage taken from super-effective moves.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Propeller Tail": {
+        "description": "Ignores effects that redirect moves.",
+        "triggers": ["Always Active"]
+    },
+    "Protean": {
+        "description": "Changes the user's type to match the move it uses once upon entering battle.",
+        "triggers": ["Before Move"]
+    },
+    "Protosynthesis": {
+        "description": "Boosts the user's highest stat in harsh sunlight or with Booster Energy.",
+        "triggers": ["On Weather", "On Item"]
+    },
+    "Psychic Surge": {
+        "description": "Creates Psychic Terrain upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Punk Rock": {
+        "description": "Boosts sound-based moves and reduces damage from them.",
+        "triggers": ["Always Active"]
+    },
+    "Pure Power": {
+        "description": "Doubles the Pokémon's Attack stat.",
+        "triggers": ["Always Active"]
+    },
+    "Purifying Salt": {
+        "description": "Prevents status conditions and halves damage from Ghost-type moves.",
+        "triggers": ["Always Active"]
+    }
+
+
+    ,
+    "Queenly Majesty": {
+        "description": "Prevents opposing Pokémon from using priority moves against this Pokémon or its allies.",
+        "triggers": ["On Priority Move"]
+    },
+    "Quick Draw": {
+        "description": "May allow the Pokémon to move first regardless of priority.",
+        "triggers": ["Before Move"]
+    },
+    "Quick Feet": {
+        "description": "Raises Speed while affected by a major status condition.",
+        "triggers": ["Always Active"]
+    }
+
+
+    ,
+    "Rain Dish": {
+        "description": "Restores HP at the end of each turn while it is raining.",
+        "triggers": ["End of Turn", "On Weather"]
+    },
+    "Rattled": {
+        "description": "Raises Speed when hit by a Bug-, Dark-, or Ghost-type move or when intimidated.",
+        "triggers": ["On Damage Taken", "On Stat Lowered"]
+    },
+    "Receiver": {
+        "description": "Copies the Ability of a fainted ally.",
+        "triggers": ["On Ally Faint"]
+    },
+    "Reckless": {
+        "description": "Boosts the power of moves that cause recoil damage.",
+        "triggers": ["Before Move"]
+    },
+    "Refrigerate": {
+        "description": "Normal-type moves become Ice-type moves and receive a power boost.",
+        "triggers": ["Before Move"]
+    },
+    "Regenerator": {
+        "description": "Restores HP when the Pokémon switches out.",
+        "triggers": ["On Switch-Out"]
+    },
+    "Ripen": {
+        "description": "Doubles the effects of Berries consumed by the Pokémon.",
+        "triggers": ["On Berry Consumed"]
+    },
+    "Rivalry": {
+        "description": "Deals more damage to Pokémon of the same gender and less to the opposite gender.",
+        "triggers": ["Before Move"]
+    },
+    "RKS System": {
+        "description": "Changes Silvally's type to match the Memory it is holding.",
+        "triggers": ["Always Active"]
+    },
+    "Rock Head": {
+        "description": "Prevents recoil damage from recoil-causing moves.",
+        "triggers": ["Always Active"]
+    },
+    "Rocky Payload": {
+        "description": "Boosts the power of Rock-type moves.",
+        "triggers": ["Always Active"]
+    },
+    "Rough Skin": {
+        "description": "Damages a Pokémon that makes contact.",
+        "triggers": ["On Contact"]
+    },
+    "Run Away": {
+        "description": "Allows the Pokémon to always flee from wild battles.",
+        "triggers": []
+    }
+
+
+    ,
+    "Sand Force": {
+        "description": "Boosts Rock-, Ground-, and Steel-type moves during a sandstorm.",
+        "triggers": ["On Weather"]
+    },
+    "Sand Rush": {
+        "description": "Doubles Speed during a sandstorm.",
+        "triggers": ["On Weather"]
+    },
+    "Sand Spit": {
+        "description": "Summons a sandstorm when hit by an attack.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Sand Stream": {
+        "description": "Summons a sandstorm upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Sand Veil": {
+        "description": "Raises evasiveness during a sandstorm.",
+        "triggers": ["On Weather"]
+    },
+    "Sap Sipper": {
+        "description": "Grants immunity to Grass-type moves and raises Attack when hit by one.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Schooling": {
+        "description": "Changes Wishiwashi into School Form while its HP is above the threshold.",
+        "triggers": ["On HP Threshold"]
+    },
+    "Scrappy": {
+        "description": "Allows Normal- and Fighting-type moves to hit Ghost-type Pokémon.",
+        "triggers": ["Always Active"]
+    },
+    "Screen Cleaner": {
+        "description": "Removes barriers and screens when entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Seed Sower": {
+        "description": "Creates Grassy Terrain after the Pokémon is hit by an attack.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Serene Grace": {
+        "description": "Doubles the chance of additional effects occurring.",
+        "triggers": ["Always Active"]
+    },
+    "Shadow Shield": {
+        "description": "Reduces damage taken when the Pokémon is at full HP.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Shadow Tag": {
+        "description": "Prevents opposing Pokémon from switching out.",
+        "triggers": ["Always Active"]
+    },
+    "Sharpness": {
+        "description": "Boosts the power of slicing moves.",
+        "triggers": ["Always Active"]
+    },
+    "Shed Skin": {
+        "description": "May cure a major status condition at the end of each turn.",
+        "triggers": ["End of Turn"]
+    },
+    "Sheer Force": {
+        "description": "Boosts moves with secondary effects while removing those effects.",
+        "triggers": ["Before Move"]
+    },
+    "Shell Armor": {
+        "description": "Prevents the Pokémon from receiving critical hits.",
+        "triggers": ["Always Active"]
+    },
+    "Shield Dust": {
+        "description": "Blocks the additional effects of damaging moves.",
+        "triggers": ["Always Active"]
+    },
+    "Shields Down": {
+        "description": "Changes Minior's form based on its HP.",
+        "triggers": ["On HP Threshold"]
+    },
+    "Simple": {
+        "description": "Doubles the effect of stat stage changes.",
+        "triggers": ["On Stat Changed"]
+    },
+    "Skill Link": {
+        "description": "Multi-hit moves always strike the maximum number of times.",
+        "triggers": ["Before Move"]
+    },
+    "Slow Start": {
+        "description": "Halves Attack and Speed for the first five turns after entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Slush Rush": {
+        "description": "Doubles Speed during snow.",
+        "triggers": ["On Weather"]
+    },
+    "Sniper": {
+        "description": "Boosts the damage dealt by critical hits.",
+        "triggers": ["On Critical Hit"]
+    },
+    "Snow Cloak": {
+        "description": "Raises evasiveness during snow.",
+        "triggers": ["On Weather"]
+    },
+    "Snow Warning": {
+        "description": "Summons snow upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Solar Power": {
+        "description": "Raises Special Attack in harsh sunlight but loses HP each turn.",
+        "triggers": ["On Weather", "End of Turn"]
+    },
+    "Solid Rock": {
+        "description": "Reduces damage taken from super-effective moves.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Soul-Heart": {
+        "description": "Raises Special Attack whenever another Pokémon faints.",
+        "triggers": ["On Faint"]
+    },
+    "Soundproof": {
+        "description": "Grants immunity to sound-based moves.",
+        "triggers": ["Always Active"]
+    },
+    "Speed Boost": {
+        "description": "Raises Speed at the end of each turn.",
+        "triggers": ["End of Turn"]
+    },
+    "Stakeout": {
+        "description": "Deals double damage to a target that switched in that turn.",
+        "triggers": ["Before Move"]
+    },
+    "Stall": {
+        "description": "Makes the Pokémon move last within its priority bracket.",
+        "triggers": ["Before Move"]
+    },
+    "Stalwart": {
+        "description": "Ignores effects that redirect moves.",
+        "triggers": ["Always Active"]
+    },
+    "Stamina": {
+        "description": "Raises Defense when hit by an attack.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Stance Change": {
+        "description": "Changes Aegislash's form based on the move it uses.",
+        "triggers": ["Before Move"]
+    },
+    "Static": {
+        "description": "May paralyze a Pokémon that makes contact.",
+        "triggers": ["On Contact"]
+    },
+    "Steadfast": {
+        "description": "Raises Speed after flinching.",
+        "triggers": ["On Flinch"]
+    },
+    "Steam Engine": {
+        "description": "Greatly raises Speed when hit by a Fire- or Water-type move.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Steelworker": {
+        "description": "Boosts the power of Steel-type moves.",
+        "triggers": ["Always Active"]
+    },
+    "Steely Spirit": {
+        "description": "Boosts the power of allies' Steel-type moves.",
+        "triggers": ["Always Active"]
+    },
+    "Stench": {
+        "description": "May cause the target to flinch.",
+        "triggers": ["After Move"]
+    },
+    "Sticky Hold": {
+        "description": "Prevents the Pokémon's held item from being removed or swapped.",
+        "triggers": ["Always Active"]
+    },
+    "Storm Drain": {
+        "description": "Draws Water-type moves to the user, grants immunity, and raises Special Attack.",
+        "triggers": ["On Move Targeted", "On Damage Taken"]
+    },
+    "Strong Jaw": {
+        "description": "Boosts the power of biting moves.",
+        "triggers": ["Always Active"]
+    },
+    "Sturdy": {
+        "description": "Prevents a one-hit knockout from full HP.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Suction Cups": {
+        "description": "Prevents forced switching.",
+        "triggers": ["Always Active"]
+    },
+    "Super Luck": {
+        "description": "Raises the critical-hit ratio of moves.",
+        "triggers": ["Always Active"]
+    },
+    "Supersweet Syrup": {
+        "description": "Lowers the evasiveness of opposing Pokémon upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Supreme Overlord": {
+        "description": "Boosts the user's moves based on the number of fainted allies.",
+        "triggers": ["Always Active"]
+    },
+    "Surge Surfer": {
+        "description": "Doubles Speed while Electric Terrain is active.",
+        "triggers": ["On Terrain"]
+    },
+    "Swarm": {
+        "description": "Boosts the power of Bug-type moves when HP is low.",
+        "triggers": ["On HP Threshold"]
+    },
+    "Sweet Veil": {
+        "description": "Prevents allies from falling asleep.",
+        "triggers": ["Always Active"]
+    },
+    "Swift Swim": {
+        "description": "Doubles Speed while it is raining.",
+        "triggers": ["On Weather"]
+    },
+    "Symbiosis": {
+        "description": "Passes its held item to an ally that consumed theirs.",
+        "triggers": ["After Item Use"]
+    },
+    "Synchronize": {
+        "description": "Passes burn, poison, or paralysis back to the Pokémon that inflicted it.",
+        "triggers": ["On Status Inflicted"]
+    }
+
+
+    ,
+    "Tablets of Ruin": {
+        "description": "Lowers the Attack of all other active Pokémon.",
+        "triggers": ["Always Active"]
+    },
+    "Tangling Hair": {
+        "description": "Lowers the Speed of a Pokémon that makes contact.",
+        "triggers": ["On Contact"]
+    },
+    "Technician": {
+        "description": "Boosts the power of moves with 60 base power or less.",
+        "triggers": ["Before Move"]
+    },
+    "Telepathy": {
+        "description": "Avoids damage from allies' attacks.",
+        "triggers": ["Always Active"]
+    },
+    "Tera Shift": {
+        "description": "Transforms Terapagos into its Terastal Form upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Tera Shell": {
+        "description": "Reduces damage from super-effective moves while at full HP.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Teraform Zero": {
+        "description": "Removes all weather and terrain effects upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Teravolt": {
+        "description": "Moves ignore the target's Ability when applicable.",
+        "triggers": ["Before Move"]
+    },
+    "Thermal Exchange": {
+        "description": "Raises Attack when hit by a Fire-type move and prevents burns.",
+        "triggers": ["On Damage Taken", "Always Active"]
+    },
+    "Thick Fat": {
+        "description": "Halves damage from Fire- and Ice-type moves.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Tinted Lens": {
+        "description": "Doubles the power of not very effective moves.",
+        "triggers": ["Before Move"]
+    },
+    "Torrent": {
+        "description": "Boosts the power of Water-type moves when HP is low.",
+        "triggers": ["On HP Threshold"]
+    },
+    "Tough Claws": {
+        "description": "Boosts the power of contact moves.",
+        "triggers": ["Before Move"]
+    },
+    "Toxic Boost": {
+        "description": "Boosts physical attacks while poisoned.",
+        "triggers": ["Always Active"]
+    },
+    "Toxic Chain": {
+        "description": "May badly poison a target after damaging it.",
+        "triggers": ["After Move"]
+    },
+    "Toxic Debris": {
+        "description": "Scatters Toxic Spikes when hit by a physical move.",
+        "triggers": ["On Damage Taken"]
+    },
+    "Trace": {
+        "description": "Copies an opposing Pokémon's Ability upon entering battle.",
+        "triggers": ["On Switch-In"]
+    },
+    "Transistor": {
+        "description": "Boosts the power of Electric-type moves.",
+        "triggers": ["Always Active"]
+    },
+    "Triage": {
+        "description": "Gives increased priority to healing moves.",
+        "triggers": ["Before Move"]
+    },
+    "Truant": {
+        "description": "Only allows the Pokémon to act every other turn.",
+        "triggers": ["Before Move"]
+    },
+    "Turboblaze": {
+        "description": "Moves ignore the target's Ability when applicable.",
+        "triggers": ["Before Move"]
+    }
+
+
+    ,
+    "Unaware": {
+        "description": "Ignores the target's stat changes when attacking and ignores the attacker's stat changes when defending.",
+        "triggers": ["Before Move", "On Damage Taken"]
+    },
+    "Unburden": {
+        "description": "Doubles Speed after the Pokémon consumes or loses its held item.",
+        "triggers": ["After Item Use"]
+    },
+    "Unnerve": {
+        "description": "Prevents opposing Pokémon from eating Berries.",
         "triggers": ["Always Active"]
     }
 
