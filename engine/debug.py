@@ -47,3 +47,16 @@ def debug_status(event, pokemon=None, status=None):
 
 def debug_field(event, **kwargs):
     return debug_event(f'FIELD:{event}', **kwargs)
+
+
+def debug_damage(attacker=None,target=None,move=None,damage=None):
+    if not DEBUG_ENABLED: return
+    print(f"[DEBUG] DAMAGE attacker={attacker} target={target} move={move} damage={damage}")
+
+def debug_accuracy(user=None,move=None,result=None):
+    if not DEBUG_ENABLED: return
+    print(f"[DEBUG] ACCURACY user={user} move={move} result={result}")
+
+def debug_secondary(move=None,effect=None):
+    if not DEBUG_ENABLED: return
+    print(f"[DEBUG] SECONDARY move={move} effect={effect}")

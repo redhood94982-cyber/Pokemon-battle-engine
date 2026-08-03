@@ -1,3 +1,4 @@
+from .debug import debug_damage, debug_accuracy, debug_secondary
 """
 Pokemon Battle Engine
 battle.py
