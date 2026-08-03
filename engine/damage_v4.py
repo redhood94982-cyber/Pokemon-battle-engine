@@ -1,4 +1,3 @@
-from .debug import debug_damage, debug_accuracy, debug_secondary
 """
 Pokemon Battle Engine
 damage.py
@@ -56,7 +55,7 @@ def get_type_multiplier(move_type: str, defender_types: list[str]) -> float:
     multiplier = 1.0
 
     for defender_type in defender_types:
-        multiplier *= TYPE_CHART.get(move_type, {}).get(defender_type, 1.0)
+        multiplier *= TYPE_CHART[move_type][defender_type]
 
     return multiplier
 
@@ -98,18 +97,12 @@ def calculate_damage(
     power=move.power
     move_type=move.move_type
     defender_types=defender.types
-    physical = move.category.lower() == "physical"
-
-    if physical:
-        attack = attacker.attack
-        defense = defender.defense
-    else:
-        attack = attacker.special_attack
-        defense = defender.special_defense
-
-    stab = move_type in attacker.types
-    burned = attacker.status == "burn"
-    spread_move = getattr(move, "spread_move", False)
+    attack=getattr(attacker,"attack",attacker.base_stats.get("atk",1))
+    defense=getattr(defender,"defense",defender.base_stats.get("def",1))
+    stab=move_type in attacker.types
+    burned=attacker.status=="burn"
+    physical=move.category.lower()=="physical"
+    spread_move=move.spread_move
 
     damage=math.floor((2*level)/5)+2
     if defense<=0:

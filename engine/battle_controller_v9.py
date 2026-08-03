@@ -1,4 +1,3 @@
-from .debug import debug_damage, debug_accuracy, debug_secondary
 """
 Pokemon Battle Engine
 battle.py
@@ -9,7 +8,6 @@ import random
 
 from .battle_state import BattleState
 from .damage_v4 import calculate_damage
-from .debug import debug_move, debug_event, debug_switch, debug_status, debug_field
 
 CRITICAL_HIT_CHANCE = 24
 
@@ -18,7 +16,6 @@ class Battle:
     """Main battle controller."""
 
     def __init__(self):
-        debug_event('Battle Initialized')
         self.state = BattleState()
         self.player1_team = []
         self.player2_team = []
@@ -26,14 +23,11 @@ class Battle:
         self.active_p2 = []
         self.winner = None
         self.state.log("Battle initialized.")
-        debug_event("Battle Initialized")
 
     def accuracy_check(self, move) -> bool:
         if move.accuracy >= 100:
             return True
-        acc=getattr(move,'accuracy',100)
-        a=getattr(getattr(move,'user',None),'stat_stages',{}).get('accuracy',0) if False else 0
-        return random.randint(1,100)<=acc
+        return random.randint(1, 100) <= move.accuracy
 
     def critical_hit(self) -> bool:
         return random.randint(1, CRITICAL_HIT_CHANCE) == 1
@@ -89,7 +83,7 @@ class Battle:
     def get_turn_order(self):
         battlers=[p for p in (self.active_p1+self.active_p2) if p.current_hp>0]
         random.shuffle(battlers)
-        battlers.sort(key=lambda p:getattr(p,'get_modified_stat',lambda s:p.speed)('spe'), reverse=True)
+        battlers.sort(key=lambda p:p.speed, reverse=True)
         return battlers
 
     def begin_turn(self):
@@ -181,7 +175,6 @@ class Battle:
         return None
 
     def end_turn(self):
-        debug_event('Turn End')
         for pokemon in self.player1_team+self.player2_team:
             if pokemon.current_hp<=0:
                 continue
@@ -227,16 +220,3 @@ class Battle:
         active[active_slot]=new_pokemon
         self.state.log(f"Go, {new_pokemon.species}!")
         return True
-
-
-    def replace_fainted(self, team:int):
-        active=self.active_p1 if team==1 else self.active_p2
-        reserve=self.player1_team if team==1 else self.player2_team
-        for i,p in enumerate(active):
-            if p.current_hp<=0:
-                for cand in reserve:
-                    if cand.current_hp>0 and cand not in active:
-                        active[i]=cand
-                        self.state.log(f"Go, {cand.species}!")
-                        break
-

@@ -1,10 +1,3 @@
-from .debug import debug_damage, debug_accuracy, debug_secondary
-try:
-    from .debug import debug_move, debug_event, debug_switch, debug_status, debug_field
-except Exception:
-    def debug_event(*a,**k):
-        return
-
 """
 Pokemon Battle Engine
 battle_state.py
