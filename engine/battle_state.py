@@ -61,6 +61,10 @@ class BattleState:
     def log(self, message: str):
         self.battle_log.append(message)
 
+    def side_of(self, pokemon):
+        """Return 1/2 when a battle controller has registered the active sides."""
+        return getattr(pokemon, "_battle_side", None)
+
     def next_turn(self):
         self.turn += 1
         self.log(f"Turn {self.turn}")
