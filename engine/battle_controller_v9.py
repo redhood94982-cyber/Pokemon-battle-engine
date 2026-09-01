@@ -2,6 +2,7 @@
 import random
 from .battle_state import BattleState
 from .damage_v4 import calculate_damage
+from . import item_resolver
 from .move import Move
 from .Database.abilities import ABILITIES
 from .Database.natures import NATURES
@@ -309,6 +310,53 @@ class Battle:
         if target.ability == "Aftermath" and move and move.makes_contact and attacker.ability != "Damp":
             attacker.damage(max(1, attacker.max_hp // 4))
 
+    def resolve_item_damage(self, attacker, defender, move, damage, super_effective=False):
+        """Resolve held-item reactions to a completed damaging hit."""
+        attacker_record = item_resolver.item_record(attacker) or {}
+        defender_record = item_resolver.item_record(defender) or {}
+
+        recoil_fraction = attacker_record.get("recoil_fraction", 0)
+        if recoil_fraction and damage > 0:
+            loss = max(1, int(attacker.max_hp * recoil_fraction))
+            attacker.current_hp = max(0, attacker.current_hp - loss)
+            self.state.log(f"{attacker.species} lost {loss} HP from {attacker.item}!")
+
+        if getattr(move, "makes_contact", False) and damage > 0:
+            contact_fraction = defender_record.get("contact_recoil_fraction", 0)
+            if contact_fraction:
+                loss = max(1, int(attacker.max_hp * contact_fraction))
+                attacker.current_hp = max(0, attacker.current_hp - loss)
+                self.state.log(f"{attacker.species} was hurt by {defender.item}!")
+
+        if super_effective and defender_record.get("trigger") == "super_effective_hit":
+            stages = getattr(defender, "stat_stages", None)
+            if stages is not None:
+                stages["attack"] = stages.get("attack", 0) + defender_record.get("attack_stage_change", 0)
+                stages["special_attack"] = stages.get("special_attack", 0) + defender_record.get("special_attack_stage_change", 0)
+            self.state.log(f"{defender.species} activated {defender.item}!")
+
+    def apply_item_end_turn(self, pokemon):
+        """Resolve simple database-defined end-of-turn item effects."""
+        record = item_resolver.item_record(pokemon) or {}
+        if pokemon.current_hp <= 0:
+            return
+
+        if pokemon.status == "poison" and record.get("poison_heal_fraction"):
+            amount = max(1, int(pokemon.max_hp * record["poison_heal_fraction"]))
+            pokemon.current_hp = min(pokemon.max_hp, pokemon.current_hp + amount)
+            self.state.log(f"{pokemon.species} restored HP with {pokemon.item}!")
+            return
+
+        if record.get("heal_fraction"):
+            amount = max(1, int(pokemon.max_hp * record["heal_fraction"]))
+            pokemon.current_hp = min(pokemon.max_hp, pokemon.current_hp + amount)
+            self.state.log(f"{pokemon.species} restored HP with {pokemon.item}!")
+
+        if record.get("non_poison_damage_fraction") and pokemon.status != "poison":
+            amount = max(1, int(pokemon.max_hp * record["non_poison_damage_fraction"]))
+            pokemon.current_hp = max(0, pokemon.current_hp - amount)
+            self.state.log(f"{pokemon.species} was hurt by {pokemon.item}!")
+
     def end_turn(self):
         for pokemon in self.active_p1 + self.active_p2:
             if not pokemon.is_fainted(): pokemon._active_turns += 1
@@ -332,6 +380,8 @@ class Battle:
                 if pokemon._perish == 0: pokemon.current_hp = 0; self.state.log(f"{pokemon.species} fainted from Perish Song!")
         for p in self.active_p1 + self.active_p2:
             p._protected = False
+        for pokemon in self.player1_team + self.player2_team:
+            self.apply_item_end_turn(pokemon)
         self.state.decrement_timers()
         if self.state.weather_turns == 0: self.state.weather = None
         if self.state.terrain_turns == 0: self.state.terrain = None

@@ -1,3 +1,4 @@
+from . import item_resolver
 """Database-backed Generation 6+ style damage calculation."""
 import math
 import random
@@ -92,3 +93,8 @@ def calculate_damage(attacker, defender, move, battle_state=None, critical: bool
 
     damage = apply_spread(damage, move.spread_move)
     return max(1, damage)
+
+
+def apply_item_damage_modifier(attacker, move, damage):
+    """Apply the held item's database-defined damage multiplier."""
+    return int(damage * item_resolver.damage_multiplier(attacker, move))

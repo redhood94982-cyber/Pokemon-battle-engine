@@ -114,3 +114,34 @@ ITEM_RESOLVER = ItemResolver(ITEM_DATABASE)
 
 
 __all__ = ["ItemResolver", "ITEM_RESOLVER"]
+
+
+def get_item(item_name):
+    """Return the canonical item record."""
+    return ITEM_DATABASE.get(item_name) if item_name else None
+
+
+def item_record(pokemon):
+    """Return the canonical record for a Pokémon's held item."""
+    return get_item(getattr(pokemon, "item", None))
+
+
+def damage_multiplier(pokemon, move):
+    record = item_record(pokemon) or {}
+    multiplier = record.get("damage_multiplier", 1.0)
+    boosted_type = record.get("boosted_type")
+    if boosted_type and getattr(move, "move_type", None) != boosted_type:
+        return 1.0
+    return multiplier
+
+
+def stat_multiplier(pokemon, stat_name):
+    return (item_record(pokemon) or {}).get(f"{stat_name}_multiplier", 1.0)
+
+
+def recoil_fraction(pokemon):
+    return (item_record(pokemon) or {}).get("recoil_fraction", 0)
+
+
+def contact_recoil_fraction(pokemon):
+    return (item_record(pokemon) or {}).get("contact_recoil_fraction", 0)
