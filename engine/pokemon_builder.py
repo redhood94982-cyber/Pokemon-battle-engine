@@ -1,5 +1,7 @@
 """Factory for constructing battle-ready Pokémon from team-sheet inputs."""
 
+import re
+
 from .Database.species import SPECIES
 from .Database.natures import NATURES
 from .Database.move_database import MOVE_DATABASE
@@ -13,13 +15,24 @@ except ImportError:
 from .pokemon_status_v3 import Pokemon
 
 
+def _normalize_name(value):
+    """Normalize human-readable names to the database naming convention."""
+    if value is None:
+        return None
+    normalized = str(value).strip().lower()
+    normalized = re.sub(r"[^a-z0-9]+", "_", normalized)
+    return normalized.strip("_")
+
+
 def _find_key(database, value):
     if value is None:
         return None
-    wanted = str(value).strip().lower()
+
+    wanted = _normalize_name(value)
     for key in database:
-        if str(key).strip().lower() == wanted:
+        if _normalize_name(key) == wanted:
             return key
+
     return None
 
 
