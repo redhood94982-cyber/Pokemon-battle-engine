@@ -64,8 +64,8 @@ def build_pokemon(*, species, level, nature, ivs, evs, ability, item=None, moves
     if species_key is None:
         raise ValueError(f"Unknown species/form: {species}")
 
-    if not isinstance(level, int) or not 1 <= level <= 100:
-        raise ValueError("Level must be an integer from 1 to 100.")
+    if not isinstance(level, int) or level != 50:
+        raise ValueError("Level must be exactly 50.")
 
     nature_key = _find_key(NATURES, nature)
     if nature_key is None:
