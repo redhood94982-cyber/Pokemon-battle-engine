@@ -1244,6 +1244,8 @@ ABILITIES = {
     "Zen Mode": {
         "description": "Changes Darmanitan's form when its HP falls below half.",
         "triggers": ["On HP Threshold"]
-    }
-
+    },
+    "Wind Power": {
+        "description": "When the Pokémon is hit by a wind move, it becomes charged, boosting the power of its next Electric-type move.",
+    },
 }
