@@ -1,25 +1,16 @@
 """Species database for the Pokémon Battle Engine.
 
-Base stats are sourced from Pokémon Database for the project species/forms.
-Only project species are included; individual IV/EV/nature calculations are
-handled separately by the stat system.
+Only populated species/forms used by the project are included here.
+Base stats are canonical species data; individual IV/EV/nature calculations
+are handled by the Pokémon/stat system.
 """
 
 SPECIES = {
-    'Gastly': {},
-    'Haunter': {},
     'Gengar': {'base_stats': {'hp': 60, 'attack': 65, 'defense': 60, 'special_attack': 130, 'special_defense': 75, 'speed': 110}},
-    'Litten': {},
-    'Torracat': {},
     'Incineroar': {'base_stats': {'hp': 95, 'attack': 115, 'defense': 90, 'special_attack': 80, 'special_defense': 90, 'speed': 60}},
-    'Sneasel': {},
-    'Weavile': {},
-    'Sneasel (Hisui)': {},
     'Sneasler': {'base_stats': {'hp': 80, 'attack': 130, 'defense': 60, 'special_attack': 40, 'special_defense': 80, 'speed': 120}},
     'Cresselia': {'base_stats': {'hp': 120, 'attack': 70, 'defense': 120, 'special_attack': 75, 'special_defense': 130, 'speed': 85}},
-    'Wattrel': {},
     'Kilowattrel': {'base_stats': {'hp': 70, 'attack': 70, 'defense': 60, 'special_attack': 105, 'special_defense': 60, 'speed': 125}},
-    'Poltchageist': {},
     'Sinistcha': {'base_stats': {'hp': 71, 'attack': 60, 'defense': 106, 'special_attack': 121, 'special_defense': 80, 'speed': 70}},
     'Calyrex-Ice': {'base_stats': {'hp': 100, 'attack': 165, 'defense': 150, 'special_attack': 85, 'special_defense': 130, 'speed': 50}},
     'Indeedee-F': {'base_stats': {'hp': 70, 'attack': 55, 'defense': 65, 'special_attack': 95, 'special_defense': 105, 'speed': 85}},
