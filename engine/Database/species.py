@@ -1,7 +1,4 @@
-"""
-species.py
-
-Species database for the Pokémon Battle Engine.
+"""Species database for the Pokémon Battle Engine.
 
 Development Rule:
 - Add complete evolution families.
@@ -10,30 +7,54 @@ Development Rule:
 """
 
 SPECIES = {
-    # Gastly Evolution Family
-    "Gastly": {},
-    "Haunter": {},
-    "Gengar": {},
-
-    # Litten Evolution Family
-    "Litten": {},
-    "Torracat": {},
-    "Incineroar": {},
-
-    # Sneasel Evolution Family
-    "Sneasel": {},
-    "Weavile": {},
-    "Sneasel (Hisui)": {},
-    "Sneasler": {},
-
-    # Cresselia
-    "Cresselia": {},
-
-    # Wattrel Evolution Family
-    "Wattrel": {},
-    "Kilowattrel": {},
-
-    # Poltchageist Evolution Family
-    "Poltchageist": {},
-    "Sinistcha": {},
+    'Gastly': {},
+    'Haunter': {},
+    'Gengar': {},
+    'Litten': {},
+    'Torracat': {},
+    'Incineroar': {},
+    'Sneasel': {},
+    'Weavile': {},
+    'Sneasel (Hisui)': {},
+    'Sneasler': {},
+    'Cresselia': {},
+    'Wattrel': {},
+    'Kilowattrel': {},
+    'Poltchageist': {},
+    'Sinistcha': {},
+    'Calyrex-Ice': {},
+    'Indeedee-F': {},
+    'Lunala': {},
+    'Ursaluna': {},
+    'Torkoal': {},
+    'Houndoom': {},
+    'Talonflame': {},
+    'Iron Hands': {},
+    'Alakazam': {},
+    'Clefable': {},
+    'Scizor': {},
+    'Tyranitar': {},
+    'Excadrill': {},
+    'Milotic': {},
+    'Volcarona': {},
+    'Aegislash': {},
+    'Amoonguss': {},
+    'Gholdengo': {},
+    'Dragonite': {},
+    'Archaludon': {},
+    'Rotom-Wash': {},
+    'Groudon': {},
+    'Charizard': {},
+    'Venusaur': {},
+    'Flutter Mane': {},
+    'Pelipper': {},
+    'Barraskewda': {},
+    'Swampert': {},
+    'Politoed': {},
+    'Kingdra': {},
+    'Abomasnow': {},
+    'Lucario': {},
+    'Alolan Ninetales': {},
+    'Lapras': {},
+    'Sneasler (Hisui)': {},
 }
