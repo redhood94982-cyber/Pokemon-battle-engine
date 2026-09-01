@@ -1,4 +1,4 @@
-"""Build battle-ready Pokémon from team-sheet inputs and canonical databases."""
+"""Factory for constructing battle-ready Pokémon from team-sheet inputs."""
 
 from .Database.species import SPECIES
 from .Database.natures import NATURES
@@ -46,7 +46,7 @@ def _validate_evs(evs):
 
 
 def build_pokemon(*, species, level, nature, ivs, evs, ability, item=None, moves=None):
-    """Construct the existing Pokemon object using database-derived data."""
+    """Build an existing Pokemon object from canonical database inputs."""
     species_key = _find_key(SPECIES, species)
     if species_key is None:
         raise ValueError(f"Unknown species/form: {species}")
