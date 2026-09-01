@@ -2,7 +2,7 @@
 
 from .Database.species import SPECIES
 from .Database.natures import NATURES
-from .Database.move_database import MOVES
+from .Database.move_database import MOVE_DATABASE
 from .Database.items import ITEM_DATABASE
 
 try:
@@ -77,7 +77,7 @@ def build_pokemon(*, species, level, nature, ivs, evs, ability, item=None, moves
 
     move_keys = []
     for move in moves:
-        move_key = _find_key(MOVES, move)
+        move_key = _find_key(MOVE_DATABASE, move)
         if move_key is None:
             raise ValueError(f"Unknown move: {move}")
         move_keys.append(move_key)
