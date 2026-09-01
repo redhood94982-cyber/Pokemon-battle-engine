@@ -13,11 +13,6 @@ except ImportError:
 from .pokemon_status_v3 import Pokemon
 
 
-def _normalize_move_name(value):
-    """Normalize human-readable move names to database-style identifiers."""
-    return re.sub(r"[^a-z0-9]+", "_", str(value).strip().lower()).strip("_")
-
-
 def _find_key(database, value):
     if value is None:
         return None
@@ -82,14 +77,7 @@ def build_pokemon(*, species, level, nature, ivs, evs, ability, item=None, moves
 
     move_keys = []
     for move in moves:
-        normalized_move = _normalize_move_name(move)
-        move_key = next(
-            (
-                key for key in MOVE_DATABASE
-                if _normalize_move_name(key) == normalized_move
-            ),
-            None,
-        )
+        move_key = _find_key(MOVE_DATABASE, move)
         if move_key is None:
             raise ValueError(f"Unknown move: {move}")
         move_keys.append(move_key)
