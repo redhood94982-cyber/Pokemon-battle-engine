@@ -111,3 +111,40 @@ class Pokemon:
         attr = {"atk": "attack", "def": "defense", "spa": "special_attack",
                 "spd": "special_defense", "spe": "speed"}[stat]
         return int(getattr(self, attr) * self.stage_multiplier(self.stat_stages.get(stat, 0)))
+
+
+# ---------------------------------------------------------------------------
+# Gen 3+ stat calculation
+# These functions intentionally preserve the required floor order.
+# ---------------------------------------------------------------------------
+
+def calculate_hp(base, iv, ev, level):
+    """Calculate HP using the Gen 3+ formula."""
+    return (((2 * base + iv + (ev // 4)) * level) // 100) + level + 10
+
+
+def calculate_stat(base, iv, ev, level, nature_multiplier=1.0):
+    """Calculate a non-HP stat using the Gen 3+ formula."""
+    intermediate = ((2 * base + iv + (ev // 4)) * level) // 100
+    return int((intermediate + 5) * nature_multiplier)
+
+
+def calculate_level_stats(base_stats, ivs, evs, level, nature_multipliers=None):
+    """Calculate all six stats from base stats, IVs, EVs, level, and nature."""
+    nature_multipliers = nature_multipliers or {}
+    hp = calculate_hp(
+        base_stats["hp"],
+        ivs["hp"],
+        evs["hp"],
+        level,
+    )
+    stats = {"hp": hp}
+    for stat in ("attack", "defense", "special_attack", "special_defense", "speed"):
+        stats[stat] = calculate_stat(
+            base_stats[stat],
+            ivs[stat],
+            evs[stat],
+            level,
+            nature_multipliers.get(stat, 1.0),
+        )
+    return stats
