@@ -258,14 +258,14 @@ class Battle:
             for p in self.active_p1+self.active_p2: p.stat_stages = {k:0 for k in p.stat_stages}
         if move.name == "Swords Dance": user.change_stage("atk", 2)
         if move.name == "Nasty Plot": user.change_stage("spa", 2)
-        if move.name == "Toxic": self._inflict_status(target, "toxic")
+        if move.name == "Toxic": self._inflict_status(target, "badly_poisoned")
         if move.name == "Sleep Powder": self._inflict_status(target, "sleep")
         if move.name == "Yawn" and target.status is None: setattr(target, "_yawn", True)
 
     def _inflict_status(self, target, status):
         if target.status is not None: return False
         if status == "sleep": target.sleep_counter = random.randint(1,3)
-        if status == "toxic": target.toxic_counter = 0
+        if status == "badly_poisoned": target.toxic_counter = 0
         target.status = status
         self.state.status_effect = status
         self.state.log(f"{target.species} became {status}!")
@@ -366,7 +366,7 @@ class Battle:
                 self._inflict_status(pokemon, "sleep"); pokemon._yawn = False
             if pokemon.status == "burn": pokemon.damage(max(1, pokemon.max_hp // 16))
             elif pokemon.status == "poison": pokemon.damage(max(1, pokemon.max_hp // 8))
-            elif pokemon.status == "toxic":
+            elif pokemon.status == "badly_poisoned":
                 pokemon.toxic_counter = max(1, pokemon.toxic_counter + 1)
                 pokemon.damage(max(1, pokemon.max_hp * pokemon.toxic_counter // 16))
             if getattr(pokemon, "_ingrain", False): pokemon.heal(max(1, pokemon.max_hp // 16))
