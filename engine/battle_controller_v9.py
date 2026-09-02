@@ -347,7 +347,60 @@ class Battle:
             if pokemon is not None:
                 pokemon._redirecting = False
 
+
+    def _begin_protect_turn(self):
+        """Reset the transient protection flags for the new turn."""
+        for pokemon in self.active_p1 + self.active_p2:
+            if pokemon is not None:
+                pokemon._protected = False
+                pokemon._protect_success = False
+
+    def _protect_success(self, pokemon):
+        """Resolve Protect-family success using the standard consecutive-use rule."""
+        streak = getattr(pokemon, "_protect_streak", 0)
+        # First use succeeds; each consecutive successful use has 1/3 the
+        # success chance of the preceding use.
+        chance = 1.0 if streak == 0 else (1.0 / (3 ** streak))
+        success = random.random() < chance
+        if success:
+            pokemon._protected = True
+            pokemon._protect_success = True
+            pokemon._protect_streak = streak + 1
+        else:
+            pokemon._protected = False
+            pokemon._protect_success = False
+            pokemon._protect_streak = 0
+        return success
+
+    def _is_protect_move(self, move):
+        return getattr(move, "name", "") in {
+            "Protect", "Detect", "Endure", "King's Shield",
+            "Spiky Shield", "Baneful Bunker", "Obstruct", "Silk Trap"
+        }
+
+    def _bypasses_protect(self, move):
+        """Moves whose damage/effect is allowed through Protect."""
+        return getattr(move, "name", "") in {
+            "Feint", "Hyperspace Fury", "Hyperspace Hole",
+            "Phantom Force", "Shadow Force"
+        }
+
+    def target_is_protected(self, target, move):
+        return (
+            getattr(target, "_protected", False)
+            and not self._bypasses_protect(move)
+        )
+
+    def _finish_protect_turn(self):
+        """Reset streaks for Pokémon that did not attempt Protect this turn."""
+        for pokemon in self.active_p1 + self.active_p2:
+            if pokemon is not None:
+                if not getattr(pokemon, "_protect_attempted", False):
+                    pokemon._protect_streak = 0
+                pokemon._protect_attempted = False
+
     def perform_turn(self, selections=None):
+        self._begin_protect_turn()
         self._clear_redirectors()
         """Resolve one turn from explicit player-selected actions.
 
@@ -507,6 +560,7 @@ class Battle:
                         return winner
             pokemon._moved_this_battle = True
             pokemon._last_move = move.name
+        self._finish_protect_turn()
         return self.check_win_condition()
 
     def use_move(self, pokemon, move):
