@@ -174,62 +174,74 @@ class Battle:
     def get_active_team(self, pokemon):
         return self.active_p1 if pokemon in self.active_p1 else self.active_p2
 
-    def get_turn_order(self, actions=None):
-        """Return action order using priority, then effective Speed, then a random tie-break.
+    def get_turn_order(self, actions):
+        """Return actions in actual execution order.
 
-        ``actions`` must contain the selected action priority for every living
-        active Pokémon when resolving a turn.  Speed modifiers that affect
-        ordering are calculated here, not by the player.
+        Ordering:
+          1. move priority
+          2. effective Speed (including field/ability modifiers)
+          3. randomized speed tie
+        Switches use priority 6 and therefore resolve before normal moves.
         """
-        battlers = [p for p in self.active_p1 + self.active_p2 if not p.is_fainted()]
-        actions = actions or {}
-        random.shuffle(battlers)  # establishes an unbiased tie-break order
+        def effective_speed(pokemon):
+            if pokemon is None or pokemon.fainted:
+                return -1
 
-        def effective_speed(p):
-            speed = p.get_modified_stat("spe")
-            if getattr(p, "status", None) == "paralysis":
-                speed //= 2
-            side = 1 if p in self.active_p1 else 2
-            if (side == 1 and self.state.tailwind_p1) or (side == 2 and self.state.tailwind_p2):
+            speed = pokemon.stats.get("spe", 0)
+
+            # Stat-stage multiplier.
+            stage = pokemon.stat_stages.get("spe", 0)
+            if stage >= 0:
+                speed = speed * (2 + stage) / 2
+            else:
+                speed = speed * 2 / (2 - stage)
+
+            # Paralysis halves Speed.
+            if pokemon.status == "paralyzed":
+                speed *= 0.5
+
+            weather = self.state.weather
+            ability = pokemon.ability
+
+            # Weather abilities are evaluated from the final weather state.
+            if weather == "sun" and ability == "Chlorophyll":
                 speed *= 2
-            if p.ability == "Chlorophyll" and self.state.weather == "sun":
+            elif weather == "rain" and ability == "Swift Swim":
                 speed *= 2
-            elif p.ability == "Swift Swim" and self.state.weather == "rain":
+            elif weather == "sand" and ability == "Sand Rush":
                 speed *= 2
-            elif p.ability == "Sand Rush" and self.state.weather == "sand":
+            elif weather == "snow" and ability == "Slush Rush":
                 speed *= 2
+
+            # Tailwind is a side condition, not a Pokémon stat change.
+            if pokemon in self.active_p1 and self.state.tailwind_p1:
+                speed *= 2
+            elif pokemon in self.active_p2 and self.state.tailwind_p2:
+                speed *= 2
+
+            # Items that directly modify Speed.
+            item = getattr(pokemon, "item", None)
+            if item == "Choice Scarf":
+                speed *= 1.5
+            elif item == "Iron Ball":
+                speed *= 0.5
+
             return speed
 
-        def key(p):
-            priority = actions.get(id(p), 0)
-            return priority, effective_speed(p)
+        decorated = []
+        for index, action in enumerate(actions):
+            pokemon = action.get("pokemon")
+            priority = action.get("priority", 0)
+            speed = effective_speed(pokemon)
 
-        # Python's stable sort preserves the shuffled order for exact ties.
-        battlers.sort(key=key, reverse=not self.state.trick_room)
-        return battlers
+            # Random tie-breaker is generated once per action, preserving
+            # the same result throughout the sort.
+            tie = random.random()
 
-    def begin_turn(self):
-        self.state.turn += 1
-        self.state.last_damage = 0
-        self.state.last_target = None
-        self.state.last_move = None
-        order = self.get_turn_order()
-        self.state.log(f"--- Turn {self.state.turn} ---")
-        self.state.log("Turn order: " + ", ".join(p.species for p in order))
-        return order
+            decorated.append((priority, speed, tie, index, action))
 
-    def _targets(self, attacker, move, chosen_target=None):
-        foes = self.active_p2 if attacker in self.active_p1 else self.active_p1
-        allies = self.active_p1 if attacker in self.active_p1 else self.active_p2
-        living_foes = [p for p in foes if not p.is_fainted()]
-        living_allies = [p for p in allies if not p.is_fainted()]
-        target = chosen_target if chosen_target in living_foes + living_allies else None
-        t = move.target
-        if t in {"all_adjacent_foes", "all_opponents", "spread"}: return living_foes
-        if t in {"all", "all_adjacent"}: return [p for p in self.active_p1+self.active_p2 if not p.is_fainted()]
-        if t in {"ally", "ally_side"}: return [attacker] if t == "ally" else living_allies
-        if t == "self": return [attacker]
-        return [target or (living_foes[0] if living_foes else None)]
+        decorated.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
+        return [entry[-1] for entry in decorated]
 
     def perform_turn(self, selections=None):
         """Resolve one turn from explicit player-selected actions.
