@@ -243,7 +243,112 @@ class Battle:
         decorated.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
         return [entry[-1] for entry in decorated]
 
+
+    def _is_spread_move(self, move):
+        """Whether a move naturally targets all valid opposing/ally targets."""
+        return getattr(move, "target", "") in {
+            "all_opponents", "all_adjacent_opponents", "all_adjacent",
+            "all", "all_foes", "all_allies"
+        }
+
+    def _move_target_mode(self, move):
+        target = getattr(move, "target", None)
+        if target:
+            return str(target).lower()
+        # Conservative fallback for the common single-target offensive case.
+        return "opponent"
+
+    def _redirects(self, move, target):
+        """Return whether Follow Me/Rage Powder can redirect this move."""
+        name = getattr(move, "name", "")
+        if name in {"Snipe Shot", "Flower Trick", "Hyper Drill", "Mighty Cleave"}:
+            return False
+        if getattr(move, "priority", 0) < 0:
+            return False
+        # Status moves that target an opponent are still redirectable unless
+        # their move data explicitly says otherwise.
+        return True
+
+    def resolve_targets(self, user, move, requested_target=None):
+        """Resolve legal doubles targets after action selection.
+
+        The caller supplies the requested target. The engine never invents a
+        player's target unless the move is inherently random or spread.
+        """
+        mode = self._move_target_mode(move)
+
+        opponents = [p for p in (self.active_p2 if user in self.active_p1 else self.active_p1)
+                     if p is not None and not p.fainted]
+        allies = [p for p in (self.active_p1 if user in self.active_p1 else self.active_p2)
+                  if p is not None and not p.fainted and p is not user]
+
+        # Spread moves determine their own target set.
+        if self._is_spread_move(move):
+            if "ally" in mode and "opponent" not in mode:
+                return allies
+            if "all" in mode and "opponent" not in mode and "foe" not in mode:
+                return allies + opponents
+            return opponents
+
+        # Explicit ally target.
+        if requested_target is not None:
+            if requested_target is user:
+                if "user" not in mode:
+                    raise ValueError(f"{move.name} cannot target its user.")
+            elif requested_target in allies:
+                if "ally" not in mode and "all" not in mode:
+                    raise ValueError(f"{move.name} cannot target an ally.")
+            elif requested_target in opponents:
+                if "opponent" not in mode and "foe" not in mode and "random" not in mode:
+                    raise ValueError(f"{move.name} cannot target an opponent.")
+            elif requested_target.fainted:
+                raise ValueError(f"{move.name} cannot target a fainted Pokémon.")
+
+        # Follow Me / Rage Powder redirection for opponent-targeting moves.
+        if requested_target in opponents and self._redirects(move, requested_target):
+            side = self.active_p2 if user in self.active_p1 else self.active_p1
+            redirector = next(
+                (p for p in side if p is not None and not p.fainted
+                 and p._active_turns > 0
+                 and getattr(p, "_redirecting", False)),
+                None
+            )
+            if redirector is not None:
+                return [redirector]
+
+        if requested_target is not None:
+            return [requested_target]
+
+        if "random" in mode:
+            if not opponents:
+                return []
+            return [random.choice(opponents)]
+
+        # A target is mandatory for ordinary single-target moves. This prevents
+        # the engine from silently choosing a target on the player's behalf.
+        if mode in {"opponent", "foe", "single_opponent", "adjacent_opponent"}:
+            raise ValueError(f"{move.name} requires an explicit target.")
+
+        if "user" in mode:
+            return [user]
+        if "ally" in mode:
+            if len(allies) != 1:
+                raise ValueError(f"{move.name} requires an explicit ally target.")
+            return allies
+
+        return []
+
+    def _apply_redirect_move(self, user, move):
+        if move.name in {"Follow Me", "Rage Powder"}:
+            user._redirecting = True
+
+    def _clear_redirectors(self):
+        for pokemon in self.active_p1 + self.active_p2:
+            if pokemon is not None:
+                pokemon._redirecting = False
+
     def perform_turn(self, selections=None):
+        self._clear_redirectors()
         """Resolve one turn from explicit player-selected actions.
 
         A living active Pokémon MUST have a selection. The engine never chooses
