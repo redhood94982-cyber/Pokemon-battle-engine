@@ -41,7 +41,7 @@ class Move:
             category=record.get("category", "Status"),
             power=record.get("power", 0),
             accuracy=record.get("accuracy", 100),
-            pp=record.get("pp", 0),
+            pp=(record.get("pp", 1) or 1),
             max_pp=record.get("max_pp", record.get("pp", 0)),
             priority=record.get("priority", 0),
             target=record.get("target", "selected"),
