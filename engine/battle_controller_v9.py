@@ -137,6 +137,12 @@ class Battle:
 
         actions = {}
         for p in self.active_p1 + self.active_p2:
+            # Fainted Pokémon cannot select or execute an action.
+            # Skip them before reading the selection so a fainted slot
+            # cannot interfere with turn construction.
+            if p.is_fainted():
+                continue
+
             choice = selected(p)
             if choice is None:
                 move = next((m for m in p.moves if m.has_pp()), None)
