@@ -258,6 +258,21 @@ class Battle:
         elif effect == "pivot": setattr(user, "_pivot", True)
         elif effect == "speed_down": target.change_stage("spe", -1)
         elif effect == "heal": user.heal(int(user.max_hp * 0.5))
+        elif effect == "helping_hand": setattr(user, "_helping_hand", True)
+        elif effect == "heal_half":
+            user.heal(int(user.max_hp * 0.5))
+            if target is not None and target is not user:
+                target.heal(int(target.max_hp * 0.5))
+        elif effect == "strength_sap":
+            target.change_stage("atk", -1)
+            user.heal(max(0, target.get_modified_stat("atk")))
+        elif effect == "def_down": target.change_stage("def", -1)
+        elif effect == "break_screens":
+            side = 1 if target in self.active_p1 else 2
+            for name in ("reflect", "light_screen", "aurora_veil"):
+                setattr(self.state, f"{name}_p{side}", 0)
+        elif effect == "poison": self._inflict_status(target, "poison")
+        elif effect == "confusion": setattr(target, "_confused", True)
 
         # Canonical named moves whose database notes contain a rule.
         if move.name == "Sunny Day": self.state.weather, self.state.weather_turns = "sun", 5
@@ -267,6 +282,16 @@ class Battle:
         if move.name == "Swords Dance": user.change_stage("atk", 2)
         if move.name == "Nasty Plot": user.change_stage("spa", 2)
         if move.name == "Toxic": self._inflict_status(target, "badly_poisoned")
+        if move.name == "Will-O-Wisp": self._inflict_status(target, "burn")
+        if move.name == "Thunder Wave": self._inflict_status(target, "paralysis")
+        if move.name == "Lunar Blessing":
+            if target is not None:
+                target.heal(int(target.max_hp * 0.5))
+                target.status = None
+        if move.name == "Life Dew":
+            for p in self.active_p1 + self.active_p2:
+                if p in self.active_p1 if user in self.active_p1 else p in self.active_p2:
+                    p.heal(int(p.max_hp * 0.25))
         if move.name == "Sleep Powder": self._inflict_status(target, "sleep")
         if move.name == "Yawn" and target.status is None: setattr(target, "_yawn", True)
 

@@ -43,6 +43,10 @@ def calculate_damage(attacker, defender, move, battle_state=None, critical: bool
     damage = math.floor(damage * move.power * attack / defense)
     damage = math.floor(damage / 50) + 2
 
+    # Hex doubles in power against a target with a status condition.
+    if move.name == "Hex" and getattr(defender, "status", None) is not None:
+        damage = math.floor(damage * 2)
+
     # Weather and a few canonical ability effects are resolved from battle state.
     weather = getattr(battle_state, "weather", None)
     if weather == "rain":
