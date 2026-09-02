@@ -79,6 +79,11 @@ def calculate_damage(attacker, defender, move, battle_state=None, critical: bool
     if defender_ability == "Fluffy" and move.move_type == "Fire":
         damage = math.floor(damage * 2)
 
+    # Type immunities must deal zero damage; the minimum-damage floor
+    # applies only after a non-immune hit.
+    if multiplier == 0:
+        return 0
+
     damage = apply_type_effectiveness(damage, multiplier)
     damage = apply_critical(damage, critical)
     damage = apply_burn(damage, getattr(attacker, "status", None) == "burn", physical)
