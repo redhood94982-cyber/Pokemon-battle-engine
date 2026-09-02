@@ -131,6 +131,8 @@ class Battle:
         """Execute a turn. Selections are keyed by id(Pokemon) or species name."""
         selections = selections or {}
         def selected(pokemon):
+            if pokemon.is_fainted():
+                return []
             return selections.get(id(pokemon), selections.get(pokemon.species))
 
         actions = {}
