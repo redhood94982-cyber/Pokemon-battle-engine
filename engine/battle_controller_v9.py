@@ -81,12 +81,25 @@ class Battle:
 
     def start_battle(self):
         if len(self.player1_team) != 6 or len(self.player2_team) != 6:
-            raise ValueError("Register both six-Pokémon teams before starting.")
+            raise ValueError("Both players must have exactly 6 Pokémon.")
         self.active_p1 = [self.player1_team[0], self.player1_team[1]]
         self.active_p2 = [self.player2_team[0], self.player2_team[1]]
-        for p in self.active_p1 + self.active_p2: self._on_switch_in(p)
+        self._process_switch_ins(self.active_p1 + self.active_p2)
         self.state.log(f"Player 1 sent out {self.active_p1[0].species} and {self.active_p1[1].species}.")
         self.state.log(f"Player 2 sent out {self.active_p2[0].species} and {self.active_p2[1].species}.")
+
+    def _process_switch_ins(self, pokemon_list):
+        """Resolve simultaneous switch-in abilities in game Speed order.
+
+        Switch-in abilities activate from faster to slower. For weather
+        setters, the later (slower) activation overwrites the earlier
+        weather. Speed ties are randomized.
+        """
+        battlers = list(pokemon_list)
+        random.shuffle(battlers)
+        battlers.sort(key=lambda p: p.get_modified_stat("spe"), reverse=True)
+        for pokemon in battlers:
+            self._on_switch_in(pokemon)
 
     def get_active_team(self, pokemon):
         return self.active_p1 if pokemon in self.active_p1 else self.active_p2
@@ -325,6 +338,8 @@ class Battle:
         ability = pokemon.ability
         if ability == "Drizzle": self.state.weather, self.state.weather_turns = "rain", 5
         elif ability == "Drought": self.state.weather, self.state.weather_turns = "sun", 5
+        elif ability == "Sand Stream": self.state.weather, self.state.weather_turns = "sand", 5
+        elif ability == "Snow Warning": self.state.weather, self.state.weather_turns = "snow", 5
         elif ability == "Electric Surge": self.state.terrain, self.state.terrain_turns = "electric", 5
         elif ability == "Grassy Surge": self.state.terrain, self.state.terrain_turns = "grassy", 5
         elif ability == "Dauntless Shield": pokemon.change_stage("def", 1)
