@@ -95,7 +95,7 @@ class Battle:
         battlers = [p for p in self.active_p1 + self.active_p2 if not p.is_fainted()]
         random.shuffle(battlers)
         def key(p):
-            move_priority = actions.get(id(p), 0) if actions else 0
+            move_priority = (actions.get(id(p), 0) or 0) if actions else 0
             speed = p.get_modified_stat("spe")
             side = 1 if p in self.active_p1 else 2
             if self.state.tailwind_p1 and side == 1: speed *= 2
