@@ -181,8 +181,20 @@ class Battle:
                 continue
             if not self.use_move(pokemon, move):
                 continue
+            if move.name != "Protect":
+                pokemon._protect_streak = 0
             if move.name == "Protect":
+                # Consecutive Protect uses have a 1/3 success multiplier each
+                # time the user successfully Protects on consecutive turns.
+                streak = getattr(pokemon, "_protect_streak", 0)
+                chance = 1.0 / (3 ** streak)
+                if random.random() >= chance:
+                    pokemon._protected = False
+                    pokemon._protect_streak = 0
+                    self.state.log(f"{pokemon.species}'s Protect failed!")
+                    continue
                 pokemon._protected = True
+                pokemon._protect_streak = streak + 1
                 self.state.log(f"{pokemon.species} protected itself!")
                 continue
             targets = [t for t in self._targets(pokemon, move, target_choice) if t is not None]
@@ -427,7 +439,11 @@ class Battle:
         if new_pokemon not in reserve or new_pokemon.is_fainted() or not 0 <= active_slot < len(active): return False
         if new_pokemon in active or getattr(active[active_slot], "_trapped", False): return False
         self.state.log(f"{active[active_slot].species}, come back!")
+        active[active_slot]._protect_streak = 0
+        active[active_slot]._protected = False
         active[active_slot] = new_pokemon
+        new_pokemon._protect_streak = 0
+        new_pokemon._protected = False
         self._on_switch_in(new_pokemon)
         self.state.log(f"Go, {new_pokemon.species}!")
         return True
