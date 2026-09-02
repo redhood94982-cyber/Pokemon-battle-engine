@@ -444,8 +444,11 @@ class Battle:
         elif effect == "confusion": setattr(target, "_confused", True)
 
         # Canonical named moves whose database notes contain a rule.
-        if move.name == "Sunny Day": self.state.weather, self.state.weather_turns = "sun", 5
+        if move.name == "Sunny Day": self.set_weather("sun", 5, user)
         if move.name == "Tailwind": self._set_side_timer(user, "tailwind", 4)
+        if move.name == "Rain Dance": self.set_weather("rain", 5, user)
+        if move.name == "Sandstorm": self.set_weather("sand", 5, user)
+        if move.name == "Snowscape": self.set_weather("snow", 5, user)
         if move.name == "Haze":
             for p in self.active_p1+self.active_p2: p.stat_stages = {k:0 for k in p.stat_stages}
         if move.name == "Swords Dance": user.change_stage("atk", 2)
@@ -477,13 +480,42 @@ class Battle:
         side = 1 if pokemon in self.active_p1 else 2
         setattr(self.state, f"{name}_p{side}", turns)
 
+    def set_weather(self, weather, turns=5, source=None):
+        """Set/overwrite field weather. The most recent activation wins."""
+        weather = str(weather).lower()
+        if weather not in {"sun", "rain", "sand", "snow"}:
+            raise ValueError(f"Unsupported weather: {weather}")
+        self.state.weather = weather
+        self.state.weather_turns = int(turns)
+        if source is not None:
+            side = 1 if source in self.active_p1 else 2 if source in self.active_p2 else None
+            if side == 1:
+                self.state.weather_source_p1 = source.species
+            elif side == 2:
+                self.state.weather_source_p2 = source.species
+        self.state.log(f"The weather became {weather}.")
+
+    def clear_weather(self):
+        self.state.clear_weather()
+        self.state.weather_source_p1 = None
+        self.state.weather_source_p2 = None
+
+    def _weather_from_ability(self, ability):
+        return {
+            "Drizzle": "rain",
+            "Drought": "sun",
+            "Sand Stream": "sand",
+            "Snow Warning": "snow",
+        }.get(ability)
+
     def _on_switch_in(self, pokemon):
         pokemon._active_turns = 0
         ability = pokemon.ability
-        if ability == "Drizzle": self.state.weather, self.state.weather_turns = "rain", 5
-        elif ability == "Drought": self.state.weather, self.state.weather_turns = "sun", 5
-        elif ability == "Sand Stream": self.state.weather, self.state.weather_turns = "sand", 5
-        elif ability == "Snow Warning": self.state.weather, self.state.weather_turns = "snow", 5
+        weather = self._weather_from_ability(ability)
+        if weather:
+            # _process_switch_ins already calls this in effective-Speed order,
+            # so later/slower setters overwrite earlier weather.
+            self.set_weather(weather, 5, pokemon)
         elif ability == "Electric Surge": self.state.terrain, self.state.terrain_turns = "electric", 5
         elif ability == "Grassy Surge": self.state.terrain, self.state.terrain_turns = "grassy", 5
         elif ability == "Dauntless Shield": pokemon.change_stage("def", 1)
@@ -587,7 +619,7 @@ class Battle:
         for pokemon in self.player1_team + self.player2_team:
             self.apply_item_end_turn(pokemon)
         self.state.decrement_timers()
-        if self.state.weather_turns == 0: self.state.weather = None
+        if self.state.weather_turns == 0: self.clear_weather()
         if self.state.terrain_turns == 0: self.state.terrain = None
         if self.state.trick_room_turns == 0: self.state.trick_room = False
         return self.check_win_condition()

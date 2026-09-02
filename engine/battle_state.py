@@ -19,6 +19,8 @@ class BattleState:
     # Weather
     weather: Optional[str] = None
     weather_turns: int = 0
+    weather_source_p1: str | None = None
+    weather_source_p2: str | None = None
 
     # Terrain
     terrain: Optional[str] = None
