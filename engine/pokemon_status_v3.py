@@ -29,6 +29,10 @@ class Pokemon:
         "accuracy": 0, "evasion": 0,
     })
     mega_evolved: bool = False
+    # Persistent Mega Evolution state. Mega Evolution is permanent for the battle,
+    # including after switching out.
+    original_species: Optional[str] = None
+    mega_species: Optional[str] = None
     _active_turns: int = 0
     _moved_this_battle: bool = False
     _last_move: Optional[str] = None
@@ -42,6 +46,8 @@ class Pokemon:
             raise KeyError(f"Ability not found in database: {self.ability}")
         if any(t not in TYPES for t in self.types):
             raise KeyError(f"Unknown Pokémon type in {self.species}: {self.types}")
+        if self.original_species is None:
+            self.original_species = self.species
         self.moves = [m if isinstance(m, Move) else Move.from_database(m) for m in self.moves]
         if len(self.moves) > 4:
             raise ValueError("A Pokémon may have at most 4 moves.")
@@ -99,6 +105,12 @@ class Pokemon:
                                       self._get(self.ivs, "Speed", "speed", "spe"),
                                       self._get(self.evs, "Speed", "speed", "spe"), nature["Speed"])
         self.current_hp = self.max_hp
+
+    def recalculate_stats_preserve_hp(self):
+        """Recalculate stats after a form change without healing or resetting HP."""
+        old_hp = self.current_hp
+        self.calculate_stats()
+        self.current_hp = min(old_hp, self.max_hp)
 
     def change_stage(self, stat, amount):
         self.stat_stages[stat] = max(-6, min(6, self.stat_stages.get(stat, 0) + amount))

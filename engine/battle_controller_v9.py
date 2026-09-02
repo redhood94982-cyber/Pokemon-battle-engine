@@ -33,6 +33,54 @@ class Battle:
     def get_nature(name): return NATURES.get(name)
     @staticmethod
     def get_species(name): return SPECIES.get(name)
+    def can_mega_evolve(self, pokemon):
+        """Return whether this Pokémon can legally Mega Evolve right now."""
+        if pokemon is None or pokemon.is_fainted() or pokemon.mega_evolved:
+            return False
+        if not getattr(pokemon, "item", None):
+            return False
+
+        item = item_resolver.item_record(pokemon) or {}
+        required_species = item.get("mega_evolution_species")
+        if not required_species:
+            return False
+
+        # The held stone must match the Pokémon's pre-Mega species.
+        base_species = getattr(pokemon, "original_species", None) or pokemon.species
+        return base_species == required_species and f"Mega {required_species}" in SPECIES
+
+    def mega_evolve(self, pokemon):
+        """Apply a player's selected Mega Evolution before move-order resolution."""
+        if not self.can_mega_evolve(pokemon):
+            raise ValueError(f"{pokemon.species} cannot Mega Evolve with its current state/item.")
+
+        side = 1 if pokemon in self.active_p1 else 2 if pokemon in self.active_p2 else None
+        if side is None:
+            raise ValueError("Only an active Pokémon can Mega Evolve.")
+
+        used_attr = "mega_used_p1" if side == 1 else "mega_used_p2"
+        if getattr(self.state, used_attr, False):
+            raise ValueError(f"Player {side} has already used Mega Evolution.")
+
+        base_species = pokemon.original_species or pokemon.species
+        mega_species = f"Mega {base_species}"
+        mega_data = SPECIES[mega_species]
+
+        # Mega Evolution does not consume the Mega Stone.
+        pokemon.mega_species = mega_species
+        pokemon.mega_evolved = True
+        pokemon.species = mega_species
+        pokemon.base_stats = dict(mega_data["base_stats"])
+        pokemon.types = list(mega_data["types"])
+        pokemon.ability = mega_data["ability"]
+
+        # HP is preserved; Mega forms do not alter the HP stat in our supported set.
+        pokemon.recalculate_stats_preserve_hp()
+        setattr(self.state, used_attr, True)
+        self.state.log(f"{base_species} Mega Evolved into {mega_species}!")
+        self.state.log(f"{mega_species}'s Ability became {pokemon.ability}!")
+        return True
+
     @staticmethod
     def get_type(name):
         if name not in TYPES: raise KeyError(f"Unknown type: {name}")
@@ -206,22 +254,46 @@ class Battle:
             choice = selected(pokemon)
             if choice is None:
                 raise ValueError(f"No action selected for {pokemon.species}.")
-            if isinstance(choice, tuple) and choice and str(choice[0]).lower() == "switch":
-                if len(choice) != 2:
-                    raise ValueError(f"Switch action for {pokemon.species} must be ('switch', replacement).")
-                return ("switch", choice[1], None)
-            target = choice[1] if isinstance(choice, tuple) and len(choice) > 1 else None
-            move = choice[0] if isinstance(choice, tuple) else choice
-            if isinstance(move, str):
-                move = Move.from_database(move)
-            if not isinstance(move, Move):
+
+            # Explicit Mega selection forms:
+            #   {"mega": True, "move": "Protect", "target": target}
+            #   ("mega", move_or_name, target)
+            # Mega is a declaration attached to the player's chosen action;
+            # the engine performs it before calculating this turn's move order.
+            mega = False
+            if isinstance(choice, dict):
+                mega = bool(choice.get("mega", False))
+                if str(choice.get("action", "")).lower() == "switch":
+                    replacement = choice.get("replacement")
+                    if replacement is None:
+                        raise ValueError(f"Switch action for {pokemon.species} requires a replacement.")
+                    return ("switch", replacement, None, mega)
+                raw_move = choice.get("move")
+                target = choice.get("target")
+            elif isinstance(choice, tuple) and choice and str(choice[0]).lower() == "mega":
+                mega = True
+                if len(choice) < 2:
+                    raise ValueError(f"Mega action for {pokemon.species} requires a move.")
+                raw_move = choice[1]
+                target = choice[2] if len(choice) > 2 else None
+            else:
+                if isinstance(choice, tuple) and choice and str(choice[0]).lower() == "switch":
+                    if len(choice) != 2:
+                        raise ValueError(f"Switch action for {pokemon.species} must be ('switch', replacement).")
+                    return ("switch", choice[1], None, False)
+                target = choice[1] if isinstance(choice, tuple) and len(choice) > 1 else None
+                raw_move = choice[0] if isinstance(choice, tuple) else choice
+
+            if isinstance(raw_move, str):
+                raw_move = Move.from_database(raw_move)
+            if not isinstance(raw_move, Move):
                 raise ValueError(f"Invalid move selection for {pokemon.species}.")
-            return ("move", move, target)
+            return ("move", raw_move, target, mega)
 
         parsed = {id(p): parse_choice(p) for p in living}
         actions = {}
         for p in living:
-            kind, action, _ = parsed[id(p)]
+            kind, action, _, _mega = parsed[id(p)]
             actions[id(p)] = 6 if kind == "switch" else action.priority
 
         # Switches occur before attacks/status moves, ordered by switch
@@ -230,6 +302,8 @@ class Battle:
         for p in switchers:
             replacement = parsed[id(p)][1]
             slot = (self.active_p1 if p in self.active_p1 else self.active_p2).index(p)
+            if parsed[id(p)][3]:
+                raise ValueError("Mega Evolution cannot be selected on a switching action.")
             if not self.switch_pokemon(1 if p in self.active_p1 else 2, slot, replacement):
                 raise ValueError(f"Illegal switch selected for {p.species}.")
         if switchers:
@@ -239,10 +313,18 @@ class Battle:
                 parsed.pop(id(p), None)
                 actions.pop(id(p), None)
 
+        # Mega Evolution happens before move-order calculation. This means the
+        # Mega form's Speed and ability are active when the turn order is built.
+        for pokemon in list(parsed_pokemon for parsed_pokemon in self.active_p1 + self.active_p2):
+            if id(pokemon) not in parsed or pokemon.is_fainted():
+                continue
+            if parsed[id(pokemon)][3]:
+                self.mega_evolve(pokemon)
+
         for pokemon in self.get_turn_order(actions):
             if pokemon.is_fainted() or id(pokemon) not in parsed:
                 continue
-            kind, move, target_choice = parsed[id(pokemon)]
+            kind, move, target_choice, _mega = parsed[id(pokemon)]
             if getattr(pokemon, "_flinched", False):
                 self.state.log(f"{pokemon.species} flinched and couldn't move!")
                 pokemon._flinched = False

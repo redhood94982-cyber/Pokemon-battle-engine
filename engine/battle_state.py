@@ -12,6 +12,10 @@ class BattleState:
     # Turn
     turn: int = 1
 
+    # Mega Evolution: one use per side per battle.
+    mega_used_p1: bool = False
+    mega_used_p2: bool = False
+
     # Weather
     weather: Optional[str] = None
     weather_turns: int = 0
