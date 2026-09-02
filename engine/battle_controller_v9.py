@@ -79,14 +79,36 @@ class Battle:
         for p in self.player2_team: p._battle_side = 2
         self.state.log("Teams registered.")
 
-    def start_battle(self):
+    def start_battle(self, player1_leads, player2_leads):
+        """Start the battle with the two leads explicitly chosen by each player.
+
+        Leads are deliberately not inferred from team-sheet order.  This keeps
+        team selection separate from lead selection and prevents the engine
+        from silently deploying the first two Pokémon on a team.
+        """
         if len(self.player1_team) != 6 or len(self.player2_team) != 6:
             raise ValueError("Both players must have exactly 6 Pokémon.")
-        self.active_p1 = [self.player1_team[0], self.player1_team[1]]
-        self.active_p2 = [self.player2_team[0], self.player2_team[1]]
+        self.active_p1 = self._validate_leads(player1_leads, self.player1_team, 1)
+        self.active_p2 = self._validate_leads(player2_leads, self.player2_team, 2)
         self._process_switch_ins(self.active_p1 + self.active_p2)
-        self.state.log(f"Player 1 sent out {self.active_p1[0].species} and {self.active_p1[1].species}.")
-        self.state.log(f"Player 2 sent out {self.active_p2[0].species} and {self.active_p2[1].species}.")
+        self.state.log(
+            f"Player 1 sent out {self.active_p1[0].species} and {self.active_p1[1].species}."
+        )
+        self.state.log(
+            f"Player 2 sent out {self.active_p2[0].species} and {self.active_p2[1].species}."
+        )
+
+    @staticmethod
+    def _validate_leads(leads, team, player_number):
+        if not isinstance(leads, (list, tuple)) or len(leads) != 2:
+            raise ValueError(f"Player {player_number} must choose exactly 2 leads.")
+        if leads[0] is leads[1]:
+            raise ValueError(f"Player {player_number} cannot choose the same Pokémon twice.")
+        if any(p not in team for p in leads):
+            raise ValueError(f"Player {player_number}'s leads must come from that player's registered team.")
+        if any(p.is_fainted() for p in leads):
+            raise ValueError(f"Player {player_number} cannot lead with a fainted Pokémon.")
+        return list(leads)
 
     def _process_switch_ins(self, pokemon_list):
         """Resolve simultaneous switch-in abilities in game Speed order.
@@ -105,15 +127,36 @@ class Battle:
         return self.active_p1 if pokemon in self.active_p1 else self.active_p2
 
     def get_turn_order(self, actions=None):
+        """Return action order using priority, then effective Speed, then a random tie-break.
+
+        ``actions`` must contain the selected action priority for every living
+        active Pokémon when resolving a turn.  Speed modifiers that affect
+        ordering are calculated here, not by the player.
+        """
         battlers = [p for p in self.active_p1 + self.active_p2 if not p.is_fainted()]
-        random.shuffle(battlers)
-        def key(p):
-            move_priority = (actions.get(id(p), 0) or 0) if actions else 0
+        actions = actions or {}
+        random.shuffle(battlers)  # establishes an unbiased tie-break order
+
+        def effective_speed(p):
             speed = p.get_modified_stat("spe")
+            if getattr(p, "status", None) == "paralysis":
+                speed //= 2
             side = 1 if p in self.active_p1 else 2
-            if self.state.tailwind_p1 and side == 1: speed *= 2
-            if self.state.tailwind_p2 and side == 2: speed *= 2
-            return move_priority, speed
+            if (side == 1 and self.state.tailwind_p1) or (side == 2 and self.state.tailwind_p2):
+                speed *= 2
+            if p.ability == "Chlorophyll" and self.state.weather == "sun":
+                speed *= 2
+            elif p.ability == "Swift Swim" and self.state.weather == "rain":
+                speed *= 2
+            elif p.ability == "Sand Rush" and self.state.weather == "sand":
+                speed *= 2
+            return speed
+
+        def key(p):
+            priority = actions.get(id(p), 0)
+            return priority, effective_speed(p)
+
+        # Python's stable sort preserves the shuffled order for exact ties.
         battlers.sort(key=key, reverse=not self.state.trick_room)
         return battlers
 
@@ -141,55 +184,74 @@ class Battle:
         return [target or (living_foes[0] if living_foes else None)]
 
     def perform_turn(self, selections=None):
-        """Execute a turn. Selections are keyed by id(Pokemon) or species name."""
-        selections = selections or {}
+        """Resolve one turn from explicit player-selected actions.
+
+        A living active Pokémon MUST have a selection. The engine never chooses
+        a move, target, or switch on the player's behalf.
+        Supported move selection forms:
+          Move / move-name
+          (Move / move-name, target Pokémon)
+        Switch selection forms:
+          ("switch", replacement Pokémon)
+        """
+        if selections is None:
+            raise ValueError("Turn selections are required; the engine will not choose actions automatically.")
+
+        living = [p for p in self.active_p1 + self.active_p2 if not p.is_fainted()]
+
         def selected(pokemon):
-            if pokemon.is_fainted():
-                return []
             return selections.get(id(pokemon), selections.get(pokemon.species))
 
-        actions = {}
-        for p in self.active_p1 + self.active_p2:
-            # Fainted Pokémon cannot select or execute an action.
-            # Skip them before reading the selection so a fainted slot
-            # cannot interfere with turn construction.
-            if p.is_fainted():
-                continue
-
-            choice = selected(p)
+        def parse_choice(pokemon):
+            choice = selected(pokemon)
             if choice is None:
-                move = next((m for m in p.moves if m.has_pp()), None)
-            else:
-                move = choice[0] if isinstance(choice, tuple) else choice
-                if isinstance(move, str):
-                    move = Move.from_database(move)
-            if move is not None:
-                actions[id(p)] = move.priority
+                raise ValueError(f"No action selected for {pokemon.species}.")
+            if isinstance(choice, tuple) and choice and str(choice[0]).lower() == "switch":
+                if len(choice) != 2:
+                    raise ValueError(f"Switch action for {pokemon.species} must be ('switch', replacement).")
+                return ("switch", choice[1], None)
+            target = choice[1] if isinstance(choice, tuple) and len(choice) > 1 else None
+            move = choice[0] if isinstance(choice, tuple) else choice
+            if isinstance(move, str):
+                move = Move.from_database(move)
+            if not isinstance(move, Move):
+                raise ValueError(f"Invalid move selection for {pokemon.species}.")
+            return ("move", move, target)
+
+        parsed = {id(p): parse_choice(p) for p in living}
+        actions = {}
+        for p in living:
+            kind, action, _ = parsed[id(p)]
+            actions[id(p)] = 6 if kind == "switch" else action.priority
+
+        # Switches occur before attacks/status moves, ordered by switch
+        # priority. Multiple switches are still simultaneous player choices.
+        switchers = [p for p in living if parsed[id(p)][0] == "switch"]
+        for p in switchers:
+            replacement = parsed[id(p)][1]
+            slot = (self.active_p1 if p in self.active_p1 else self.active_p2).index(p)
+            if not self.switch_pokemon(1 if p in self.active_p1 else 2, slot, replacement):
+                raise ValueError(f"Illegal switch selected for {p.species}.")
+        if switchers:
+            # Switching ends the action for that slot this turn.
+            living = [p for p in self.active_p1 + self.active_p2 if not p.is_fainted()]
+            for p in switchers:
+                parsed.pop(id(p), None)
+                actions.pop(id(p), None)
 
         for pokemon in self.get_turn_order(actions):
-            if pokemon.is_fainted():
+            if pokemon.is_fainted() or id(pokemon) not in parsed:
                 continue
+            kind, move, target_choice = parsed[id(pokemon)]
             if getattr(pokemon, "_flinched", False):
                 self.state.log(f"{pokemon.species} flinched and couldn't move!")
                 pokemon._flinched = False
                 continue
-            choice = selected(pokemon)
-            target_choice = choice[1] if isinstance(choice, tuple) and len(choice) > 1 else None
-            if choice is None:
-                move = next((m for m in pokemon.moves if m.has_pp()), None)
-            else:
-                move = choice[0] if isinstance(choice, tuple) else choice
-                if isinstance(move, str):
-                    move = Move.from_database(move)
-            if move is None:
-                self.state.log(f"{pokemon.species} has no move available.")
-                continue
-            if not move.has_pp():
-                self.state.log(f"{move.name} has no PP left!")
-                continue
-            if move.name == "Fake Out" and pokemon._active_turns > 0:
+            if getattr(pokemon, "_active_turns", 0) == 0 and move.name == "Fake Out" and pokemon._moved_this_battle:
                 self.state.log(f"{pokemon.species} can't use Fake Out after entering battle!")
                 continue
+            if not move.has_pp():
+                raise ValueError(f"{move.name} has no PP left for {pokemon.species}.")
             if self.paralysis_check(pokemon) or self.sleep_check(pokemon):
                 continue
             if not self.use_move(pokemon, move):
@@ -197,8 +259,6 @@ class Battle:
             if move.name != "Protect":
                 pokemon._protect_streak = 0
             if move.name == "Protect":
-                # Consecutive Protect uses have a 1/3 success multiplier each
-                # time the user successfully Protects on consecutive turns.
                 streak = getattr(pokemon, "_protect_streak", 0)
                 chance = 1.0 / (3 ** streak)
                 if random.random() >= chance:
@@ -210,14 +270,16 @@ class Battle:
                 pokemon._protect_streak = streak + 1
                 self.state.log(f"{pokemon.species} protected itself!")
                 continue
+
             targets = [t for t in self._targets(pokemon, move, target_choice) if t is not None]
             if not targets:
                 continue
-            if not self.accuracy_check(pokemon, move, targets[0]):
-                self.state.log(f"{pokemon.species}'s {move.name} missed!")
-                continue
+            # Accuracy is checked per target for spread/redirected resolution.
             for target in targets:
                 if target.is_fainted():
+                    continue
+                if not self.accuracy_check(pokemon, move, target):
+                    self.state.log(f"{pokemon.species}'s {move.name} missed {target.species}!")
                     continue
                 if getattr(target, "_protected", False) and move.protectable:
                     self.state.log(f"{target.species} protected itself from {move.name}!")
@@ -229,12 +291,12 @@ class Battle:
                     self.state.last_damage, self.state.last_target = damage, target
                     self.state.log(f"{target.species} took {damage} damage! ({target.current_hp}/{target.max_hp} HP remaining)")
                     self._on_damage_taken(pokemon, target, move, damage, crit)
-                    if move.drain:
-                        pokemon.heal(max(1, int(damage * move.drain)))
-                    if move.recoil:
-                        recoil = max(1, int(damage * move.recoil))
-                        pokemon.damage(recoil)
-                        self.state.log(f"{pokemon.species} took {recoil} recoil damage!")
+                if move.drain and damage:
+                    pokemon.heal(max(1, int(damage * move.drain)))
+                if move.recoil and damage:
+                    recoil = max(1, int(damage * move.recoil))
+                    pokemon.damage(recoil)
+                    self.state.log(f"{pokemon.species} took {recoil} recoil damage!")
                 if move.healing:
                     pokemon.heal(max(1, int(pokemon.max_hp * move.healing)))
                 self._apply_move_effect(pokemon, target, move)
@@ -244,8 +306,8 @@ class Battle:
                     winner = self.check_win_condition()
                     if winner:
                         return winner
-            if pokemon.is_fainted():
-                continue
+            pokemon._moved_this_battle = True
+            pokemon._last_move = move.name
         return self.check_win_condition()
 
     def use_move(self, pokemon, move):

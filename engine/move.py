@@ -51,7 +51,9 @@ class Move:
             stat_changes=record.get("stat_changes") or {},
             status_effect=record.get("status_inflicted"),
             effect_chance=(record.get("effect_chance", 100) or 100),
-            recoil=record.get("recoil", recoil),
+            drain=float(record.get("drain", 0.0) or 0.0),
+            recoil=float(record.get("recoil", recoil) or recoil),
+            healing=float(record.get("healing", 0.0) or 0.0),
             secondary_effect=record.get("secondary_effect"),
             notes=record.get("notes", ""),
         )
