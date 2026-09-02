@@ -109,6 +109,17 @@ class Battle:
             return True
         return False
 
+    def freeze_check(self, pokemon):
+        if pokemon.status != "freeze":
+            return False
+        # Standard thaw chance: 20% per attempted move.
+        if random.randint(1, 100) <= 20:
+            pokemon.status = None
+            self.state.log(f"{pokemon.species} thawed out!")
+            return False
+        self.state.log(f"{pokemon.species} is frozen solid!")
+        return True
+
     def sleep_check(self, pokemon):
         if pokemon.status != "sleep": return False
         if pokemon.sleep_counter <= 0:
@@ -504,7 +515,9 @@ class Battle:
                 continue
             if not move.has_pp():
                 raise ValueError(f"{move.name} has no PP left for {pokemon.species}.")
-            if self.paralysis_check(pokemon) or self.sleep_check(pokemon):
+            if (self.paralysis_check(pokemon)
+                    or self.sleep_check(pokemon)
+                    or self.freeze_check(pokemon)):
                 continue
             if not self.use_move(pokemon, move):
                 continue
@@ -574,7 +587,13 @@ class Battle:
         if move.stat_changes:
             for recipient, changes in move.stat_changes.items():
                 obj = user if recipient in {"self", "user"} else target
-                for stat, amount in changes.items(): obj.change_stage(stat, amount)
+                if obj is None or obj.is_fainted():
+                    continue
+                for stat, amount in changes.items():
+                    changed = obj.change_stage(stat, amount)
+                    if changed:
+                        direction = "rose" if changed > 0 else "fell"
+                        self.state.log(f"{obj.species}'s {stat.upper()} {direction}!")
         if move.status_effect and random.randint(1,100) <= move.effect_chance:
             self._inflict_status(target, move.status_effect)
         if effect == "burn" and random.randint(1,100) <= move.effect_chance: self._inflict_status(target, "burn")
@@ -639,10 +658,12 @@ class Battle:
         if move.name == "Yawn" and target.status is None: setattr(target, "_yawn", True)
 
     def _inflict_status(self, target, status):
-        if target.status is not None: return False
-        if status == "sleep": target.sleep_counter = random.randint(1,3)
-        if status == "badly_poisoned": target.toxic_counter = 0
-        target.status = status
+        status = str(status).lower()
+        if not target.apply_status(status):
+            return False
+        if status == "sleep":
+            # Sleep lasts a random 1-3 turns in this simulator.
+            target.sleep_counter = random.randint(1, 3)
         self.state.status_effect = status
         self.state.log(f"{target.species} became {status}!")
         return True

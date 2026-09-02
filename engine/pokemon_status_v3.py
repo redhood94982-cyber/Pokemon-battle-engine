@@ -113,7 +113,34 @@ class Pokemon:
         self.current_hp = min(old_hp, self.max_hp)
 
     def change_stage(self, stat, amount):
-        self.stat_stages[stat] = max(-6, min(6, self.stat_stages.get(stat, 0) + amount))
+        stat = str(stat).lower()
+        if stat not in self.stat_stages:
+            raise ValueError(f"Unknown stat stage: {stat}")
+        old = self.stat_stages[stat]
+        self.stat_stages[stat] = max(-6, min(6, old + int(amount)))
+        return self.stat_stages[stat] - old
+
+    def apply_status(self, status):
+        """Apply a major status condition when the Pokémon is eligible."""
+        status = str(status).lower()
+        valid = {"burn", "poison", "badly_poisoned", "paralysis", "sleep", "freeze"}
+        if status not in valid or self.status is not None or self.is_fainted():
+            return False
+        # Basic type immunities for major status.
+        if status == "burn" and "Fire" in self.types:
+            return False
+        if status in {"poison", "badly_poisoned"} and ("Poison" in self.types or "Steel" in self.types):
+            return False
+        if status == "paralysis" and "Electric" in self.types:
+            return False
+        if status == "freeze" and "Ice" in self.types:
+            return False
+        self.status = status
+        if status == "sleep":
+            self.sleep_counter = 1
+        elif status == "badly_poisoned":
+            self.toxic_counter = 0
+        return True
 
     @staticmethod
     def stage_multiplier(stage):
